@@ -1,18 +1,11 @@
 package com.example.asd
 
-<<<<<<< Updated upstream
-class TodoAdapter {
-=======
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Typeface
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -21,12 +14,12 @@ import com.example.asd.todos.Todo
 import com.example.asd.todos.TodoViewModel
 import java.util.*
 
-class TodoAdapter(val context: Context,
-                   var itemList: MutableList<Todo>,
-                   val viewModel: TodoViewModel,
-//                val setList: () -> Unit
-) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoAdapter.TodoViewHolder {
+class TodayAdapter(val context: Context,
+                var itemList: MutableList<Todo>,
+                val viewModel: TodoViewModel,
+                val setList: () -> Unit
+) : RecyclerView.Adapter<TodayAdapter.TodoViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodayAdapter.TodoViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.item_todo,parent,false)
 
@@ -56,7 +49,7 @@ class TodoAdapter(val context: Context,
                 .setPositiveButton("삭제") {str, dialogInterface ->
                     val todo = itemList[position]
                     viewModel.delete(todo)
-//                    setList()
+                    setList()
                 }
                 .setNegativeButton("취소",null)
             alertDialog.show()
@@ -67,12 +60,10 @@ class TodoAdapter(val context: Context,
         return itemList.size
     }
 
-
     inner class TodoViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         val todoInfo = itemView.findViewById<ConstraintLayout>(R.id.todo_info)
         val todoText = itemView.findViewById<TextView>(R.id.todo_text)
         val todoTime = itemView.findViewById<TextView>(R.id.todo_time)
         val todoDelete = itemView.findViewById<ImageView>(R.id.todo_delete)
     }
->>>>>>> Stashed changes
 }

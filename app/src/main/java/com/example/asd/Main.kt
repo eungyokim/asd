@@ -11,21 +11,44 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.asd.todos.Todo
+import com.example.asd.todos.TodoViewModel
+import com.example.asd.todos.ViewModelProviderFactory
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.client.Socket.EVENT_CONNECT
 import io.socket.emitter.Emitter
 import java.net.URISyntaxException
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class Main : AppCompatActivity() {
 
+    lateinit var todayAdapter : TodayAdapter
+    lateinit var viewModel : TodoViewModel
+    lateinit var todoList: MutableLiveData<MutableList<Todo>>
+
+    //년월 변수
+    lateinit var selectedDate: LocalDate
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
+
+        selectedDate = LocalDate.now()
+        findViewById<TextView>(R.id.main_todolist_dash_middle).text = yearMonthFromDate(selectedDate)
+
+
         val sharedPreference = getSharedPreferences("uuid", 0)
         val editor  : SharedPreferences.Editor = sharedPreference.edit()
 
@@ -70,7 +93,28 @@ class Main : AppCompatActivity() {
                 toast("Do Not Disturb turned off")
             }
         }
+
+
+        //뷰모델 받아오기
+        viewModel = ViewModelProvider(this, ViewModelProviderFactory(this.application))
+            .get(TodoViewModel::class.java)
+
+        //recycler view에 보여질 아이템 Room에서 받아오기
+        todoList = viewModel.mutableLiveData
+        todoList.observe(this, Observer {
+            todayAdapter.itemList = it
+            todayAdapter.notifyDataSetChanged()
+        })
+
+        todayAdapter = TodayAdapter(this, mutableListOf<Todo>(), viewModel, ::setList)
+
+
+        //recycler view에 adapter와 layout manager 넣기
+        findViewById<RecyclerView>(R.id.recyclerView).adapter = todayAdapter
+        findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
+
     }
+
 
     //DND기능
     // Method to check notification policy access status
@@ -108,6 +152,16 @@ class Main : AppCompatActivity() {
     fun Context.toast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
+    fun setList() {
+        todoList.value = viewModel.getTodayList()
     }
+}
+private fun yearMonthFromDate(date: LocalDate): String{
+    var formatter = DateTimeFormatter.ofPattern("YYYY년 M월 d일")
+
+    //받아온 날짜를 해당 포맷으로 변경
+    return date.format(formatter)
+}
+
 
 
