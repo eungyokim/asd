@@ -29,7 +29,6 @@ class TodoAdapter(val context: Context,
     }
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-
         // position에 해당하는 Todo객체를 얻음
         val todo = itemList[position];
 

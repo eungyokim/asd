@@ -37,7 +37,7 @@ class Calendar : AppCompatActivity() {
     //년월 변수
     lateinit var selectedDate: LocalDate
 
-    lateinit var click_date : String
+    lateinit var dayText: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,9 +51,11 @@ class Calendar : AppCompatActivity() {
         //recycler view에 보여질 아이템 Room에서 받아오기
 
         viewModel.date.observe(this, androidx.lifecycle.Observer {
+            Log.d("date",it.toString());
             val list = viewModel.getSelectedList(it.toString())
 
             adapter = TodoAdapter(this, list, viewModel);
+            Log.d("date",list.toString());
 
             findViewById<RecyclerView>(R.id.recyclerView).adapter = adapter
             findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
@@ -103,15 +105,19 @@ class Calendar : AppCompatActivity() {
             if (findViewById<TextView>(R.id.recycleradd).text.toString() != "") {
                 val rnd = Random()
                 val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+
                 var Date = java.util.Calendar.getInstance()
 
-                var year = Date.get(java.util.Calendar.YEAR)
-                var month = Date.get(java.util.Calendar.MONTH) + 1
-                var date = Date.get(java.util.Calendar.DATE)
+                var year = dayText.split("/")[0]
+                var month = dayText.split("/")[1]
+                var date = dayText.split("/")[2]
                 var time = "${year}-${month}-${date}"
-                val todo = Todo(findViewById<TextView>(R.id.recycleradd).text.toString(), time, click_date.split('/')[0].toInt(), click_date.split('/')[1].toInt(), click_date.split('/')[2].toInt(), color.toString())
+
+
+
+                val todo = Todo(findViewById<TextView>(R.id.recycleradd).text.toString(), time, year.toInt(), month.toInt(), date.toInt(), color.toString())
                 viewModel.insert(todo)
-                setList("${click_date.split('/')[0]}/${click_date.split('/')[1]}/${click_date.split('/')[2]}")
+                setList("${year}/${month}/${date}")
                 findViewById<TextView>(R.id.recycleradd).setText("")
             }
         }
@@ -149,7 +155,7 @@ class Calendar : AppCompatActivity() {
 
                 var clickDay: String = "${year}/${month}/${date}"
 
-                click_date = clickDay
+                dayText = clickDay
 
                 viewModel.updateDate(clickDay)
             }
