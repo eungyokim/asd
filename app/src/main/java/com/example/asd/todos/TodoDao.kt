@@ -1,10 +1,5 @@
 package com.example.asd.todos
 
-<<<<<<< Updated upstream
-class TodoDao {
-=======
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.room.*
 
 @Dao
@@ -24,5 +19,4 @@ interface TodoDao {
 
     @Delete
     fun delete(todo: Todo)
->>>>>>> Stashed changes
 }

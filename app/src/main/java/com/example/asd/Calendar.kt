@@ -2,25 +2,21 @@ package com.example.asd
 
 import android.content.Intent
 import android.os.Bundle
-<<<<<<< Updated upstream
-import android.widget.ImageButton
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-=======
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ListAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
->>>>>>> Stashed changes
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.asd.todos.Todo
+import com.example.asd.todos.TodoViewModel
+import com.example.asd.todos.ViewModelProviderFactory
 import com.example.asd.databinding.CalendarBinding
 import java.time.LocalDate
 import java.time.YearMonth
@@ -28,13 +24,11 @@ import java.time.format.DateTimeFormatter
 
 class Calendar : AppCompatActivity() {
 
-<<<<<<< Updated upstream
-=======
     // Todo List
     private lateinit var adapter: TodoAdapter
     lateinit var viewModel : TodoViewModel
 
->>>>>>> Stashed changes
+
     private lateinit var binding: CalendarBinding
 
     //년월 변수
@@ -132,8 +126,6 @@ class Calendar : AppCompatActivity() {
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
         }
 
-<<<<<<< Updated upstream
-=======
         findViewById<Button>(R.id.add_button).setOnClickListener {
             if (findViewById<TextView>(R.id.recycleradd).text.toString() != "") {
                 var Date = java.util.Calendar.getInstance()
@@ -148,16 +140,29 @@ class Calendar : AppCompatActivity() {
                 findViewById<TextView>(R.id.recycleradd).setText("")
             }
         }
->>>>>>> Stashed changes
-
     }
 
 
     //날짜 화면에 보여주기
     private fun setMonthView() {
         //년월 텍스트 셋팅
+        binding.calendarCalendarYearnmonth.text = yearMonthFromDate(selectedDate)
+
+        //날짜 생성해서 리스트에 담기
+        val dayList = dayInMonthArray(selectedDate)
+
+        //어댑터 초기화
+        val adapter = CalendarAdapter(dayList)
 
 
+        //레이아웃 설정(열 7개)
+        val manager: RecyclerView.LayoutManager = GridLayoutManager(applicationContext, 7)
+
+        //레이아웃 적용
+        binding.calendarRecyclerview.layoutManager = manager
+
+        //어댑터 적용
+        binding.calendarRecyclerview.adapter = adapter
     }
 
     private fun yearMonthFromDate(date: LocalDate): String{
@@ -197,19 +202,13 @@ class Calendar : AppCompatActivity() {
 
         return dayList
     }
-<<<<<<< Updated upstream
-=======
-
 
     // 화면을 다시 돌리기 위해 viewModel 내에 있는 LiveData의 value를 변경시켜줌.
     // value가 변경됨에 따라 observer에 설정된 함수가 실행되고 UI가 변경됨.
     fun setList(data:String) {
-        val list = viewModel.getSelectedList(data.toString())
+        val list = viewModel.getSelectedList(data)
         adapter = TodoAdapter(this, list, viewModel);
-
         findViewById<RecyclerView>(R.id.recyclerView).adapter = adapter
         findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
     }
-
->>>>>>> Stashed changes
 }

@@ -1,14 +1,9 @@
 package com.example.asd.todos
 
-<<<<<<< Updated upstream
-class TodoViewModel {
-=======
-import android.app.Application
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.room.*
 import androidx.room.Room
 
 class TodoViewModel(context: Context) : ViewModel() {
@@ -19,6 +14,7 @@ class TodoViewModel(context: Context) : ViewModel() {
         .build()
 
     private val todoDao = todoDatabase.todoDao()
+
     var Date = java.util.Calendar.getInstance()
 
     private val todos = getTodayList()
@@ -29,19 +25,21 @@ class TodoViewModel(context: Context) : ViewModel() {
 
     private val _date = MutableLiveData<String>()
 
-    val date : LiveData<String>
+    val date: LiveData<String>
         get() = _date
 
     fun getList(): MutableList<Todo> {
         return getAll()
     }
-    fun getTodayList(): MutableList<Todo>{
+
+    fun getTodayList(): MutableList<Todo> {
         var tyear = Date.get(java.util.Calendar.YEAR)
         var tmonth = Date.get(java.util.Calendar.MONTH) + 1
         var tdate = Date.get(java.util.Calendar.DATE)
         return todoDao.getToday(tyear.toString(), tmonth.toString(), tdate.toString())
     }
-    fun getSelectedList(data: String): MutableList<Todo>{
+
+    fun getSelectedList(data: String): MutableList<Todo> {
         return todoDao.getSelectedDay(
             data.split("/")[0],
             data.split("/")[1],
@@ -49,20 +47,19 @@ class TodoViewModel(context: Context) : ViewModel() {
         )
     }
 
-    fun getAll() : MutableList<Todo> {
+    fun getAll(): MutableList<Todo> {
         return todoDao.getAll()
     }
+
     fun insert(todo: Todo) {
         todoDao.insert(todo)
     }
+
     fun delete(todo: Todo) {
         todoDao.delete(todo)
     }
-    fun updateDate(clickDay: String){
+
+    fun updateDate(clickDay: String) {
         _date.value = clickDay
     }
-
-
-
->>>>>>> Stashed changes
 }

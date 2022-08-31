@@ -15,9 +15,9 @@ import com.example.asd.todos.TodoViewModel
 import java.util.*
 
 class TodayAdapter(val context: Context,
-                var itemList: MutableList<Todo>,
-                val viewModel: TodoViewModel,
-                val setList: () -> Unit
+                   var itemList: MutableList<Todo>,
+                   val viewModel: TodoViewModel,
+                   val setList: () -> Unit
 ) : RecyclerView.Adapter<TodayAdapter.TodoViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodayAdapter.TodoViewHolder {
         val inflater = LayoutInflater.from(parent.context)

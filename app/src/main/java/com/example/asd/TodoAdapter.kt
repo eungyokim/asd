@@ -1,30 +1,24 @@
 package com.example.asd
 
-<<<<<<< Updated upstream
-class TodoAdapter {
-=======
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Typeface
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.asd.todos.Todo
 import com.example.asd.todos.TodoViewModel
 import java.util.*
 
 class TodoAdapter(val context: Context,
-                   var itemList: MutableList<Todo>,
-                   val viewModel: TodoViewModel,
-//                val setList: () -> Unit
+                  var itemList: MutableList<Todo>,
+                  val viewModel: TodoViewModel,
+//                val setList: (data:String) -> Unit
 ) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoAdapter.TodoViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -56,7 +50,6 @@ class TodoAdapter(val context: Context,
                 .setPositiveButton("삭제") {str, dialogInterface ->
                     val todo = itemList[position]
                     viewModel.delete(todo)
-//                    setList()
                 }
                 .setNegativeButton("취소",null)
             alertDialog.show()
@@ -74,5 +67,5 @@ class TodoAdapter(val context: Context,
         val todoTime = itemView.findViewById<TextView>(R.id.todo_time)
         val todoDelete = itemView.findViewById<ImageView>(R.id.todo_delete)
     }
->>>>>>> Stashed changes
+
 }

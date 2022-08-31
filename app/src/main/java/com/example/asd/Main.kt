@@ -1,20 +1,18 @@
 package com.example.asd
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
-import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
+import android.telephony.SmsManager
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -23,11 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.asd.todos.Todo
 import com.example.asd.todos.TodoViewModel
 import com.example.asd.todos.ViewModelProviderFactory
-import io.socket.client.IO
-import io.socket.client.Socket
-import io.socket.client.Socket.EVENT_CONNECT
-import io.socket.emitter.Emitter
-import java.net.URISyntaxException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -47,7 +40,6 @@ class Main : AppCompatActivity() {
 
         selectedDate = LocalDate.now()
         findViewById<TextView>(R.id.main_todolist_dash_middle).text = yearMonthFromDate(selectedDate)
-
 
         val sharedPreference = getSharedPreferences("uuid", 0)
         val editor  : SharedPreferences.Editor = sharedPreference.edit()
@@ -156,6 +148,8 @@ class Main : AppCompatActivity() {
         todoList.value = viewModel.getTodayList()
     }
 }
+
+
 private fun yearMonthFromDate(date: LocalDate): String{
     var formatter = DateTimeFormatter.ofPattern("YYYY년 M월 d일")
 
