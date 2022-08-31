@@ -1,16 +1,20 @@
 package com.example.asd
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import java.time.LocalDate
 import kotlin.collections.ArrayList
 
 class CalendarAdapter(private val dayList: ArrayList<String>): RecyclerView.Adapter<CalendarAdapter.ItemViewHolder>() {
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val dayText: TextView = itemView.findViewById(R.id.calendar_cell_daytext)
     }
+    //클릭리스너 선언
+    private lateinit var itemClickListner: ItemClickListener
 
     //화면 설정
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -25,7 +29,6 @@ class CalendarAdapter(private val dayList: ArrayList<String>): RecyclerView.Adap
         // ex) '8/21'
         //     '10/21' 등등
         holder.dayText.text = dayList[holder.adapterPosition]
-
         holder.itemView.setOnClickListener {
             itemClickListner.onClick(it, position)
         }
@@ -39,9 +42,6 @@ class CalendarAdapter(private val dayList: ArrayList<String>): RecyclerView.Adap
     interface ItemClickListener {
         fun onClick(view: View, position: Int)
     }
-
-    //클릭리스너 선언
-    private lateinit var itemClickListner: ItemClickListener
 
     //클릭리스너 등록 매소드
     fun setItemClickListener(itemClickListener: ItemClickListener) {

@@ -29,8 +29,7 @@ class TodoAdapter(val context: Context,
     }
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        val rnd = Random()
-        val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+
         // position에 해당하는 Todo객체를 얻음
         val todo = itemList[position];
 
@@ -40,7 +39,7 @@ class TodoAdapter(val context: Context,
         holder.todoTime.apply {
             holder.itemView.findViewById<TextView>(R.id.todo_time).text = "${todo.date}"
             holder.itemView.findViewById<TextView>(R.id.todo_time).visibility = View.VISIBLE
-            holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundColor(color)
+            holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundColor(todo.color!!.toInt())
         }
 
         //아이템 내의 x버튼을 누를 경우 삭제여부 확인.

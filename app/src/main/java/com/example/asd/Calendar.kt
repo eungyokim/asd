@@ -1,6 +1,7 @@
 package com.example.asd
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -21,6 +22,8 @@ import com.example.asd.databinding.CalendarBinding
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class Calendar : AppCompatActivity() {
 
@@ -34,6 +37,8 @@ class Calendar : AppCompatActivity() {
     //년월 변수
     lateinit var selectedDate: LocalDate
 
+    lateinit var click_date : String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.calendar)
@@ -46,11 +51,9 @@ class Calendar : AppCompatActivity() {
         //recycler view에 보여질 아이템 Room에서 받아오기
 
         viewModel.date.observe(this, androidx.lifecycle.Observer {
-            Log.d("date",it.toString());
             val list = viewModel.getSelectedList(it.toString())
 
             adapter = TodoAdapter(this, list, viewModel);
-            Log.d("date",list.toString());
 
             findViewById<RecyclerView>(R.id.recyclerView).adapter = adapter
             findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
@@ -62,37 +65,7 @@ class Calendar : AppCompatActivity() {
         //현재 날짜
         selectedDate = LocalDate.now()
 
-        //화면 설정
-        binding.calendarCalendarYearnmonth.text = yearMonthFromDate(selectedDate)
-
-        //날짜 생성해서 리스트에 담기
-        val dayList = dayInMonthArray(selectedDate)
-
-        //어댑터 초기화
-        val adapter = CalendarAdapter(dayList)
-
-        //레이아웃 설정(열 7개)
-        val manager: RecyclerView.LayoutManager = GridLayoutManager(applicationContext, 7)
-
-        //레이아웃 적용
-        binding.calendarRecyclerview.layoutManager = manager
-
-        //어댑터 적용
-        binding.calendarRecyclerview.adapter = adapter
-
-        adapter.setItemClickListener(object: CalendarAdapter.ItemClickListener{
-            override fun onClick(view: View, position: Int) {
-                var year = binding.calendarCalendarYearnmonth.text.split(" ")[0]
-                year = year.replace("년", "")
-                var month = binding.calendarCalendarYearnmonth.text.split(" ")[1]
-                month = month.replace("월", "")
-                var date = dayList[position]
-
-                var clickDay: String = "${year}/${month}/${date}"
-
-                viewModel.updateDate(clickDay)
-            }
-        })
+        setMonthView()
 
         //이전달로 넘어가기
         binding.calendarCalendarDashLeft.setOnClickListener {
@@ -128,15 +101,17 @@ class Calendar : AppCompatActivity() {
 
         findViewById<Button>(R.id.add_button).setOnClickListener {
             if (findViewById<TextView>(R.id.recycleradd).text.toString() != "") {
+                val rnd = Random()
+                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
                 var Date = java.util.Calendar.getInstance()
 
                 var year = Date.get(java.util.Calendar.YEAR)
                 var month = Date.get(java.util.Calendar.MONTH) + 1
                 var date = Date.get(java.util.Calendar.DATE)
                 var time = "${year}-${month}-${date}"
-                val todo = Todo(findViewById<TextView>(R.id.recycleradd).text.toString(), time, year, month, date)
+                val todo = Todo(findViewById<TextView>(R.id.recycleradd).text.toString(), time, click_date.split('/')[0].toInt(), click_date.split('/')[1].toInt(), click_date.split('/')[2].toInt(), color.toString())
                 viewModel.insert(todo)
-                setList("${year}/${month}/${date}")
+                setList("${click_date.split('/')[0]}/${click_date.split('/')[1]}/${click_date.split('/')[2]}")
                 findViewById<TextView>(R.id.recycleradd).setText("")
             }
         }
@@ -163,6 +138,22 @@ class Calendar : AppCompatActivity() {
 
         //어댑터 적용
         binding.calendarRecyclerview.adapter = adapter
+
+        adapter.setItemClickListener(object: CalendarAdapter.ItemClickListener{
+            override fun onClick(view: View, position: Int) {
+                var year = binding.calendarCalendarYearnmonth.text.split(" ")[0]
+                year = year.replace("년", "")
+                var month = binding.calendarCalendarYearnmonth.text.split(" ")[1]
+                month = month.replace("월", "")
+                var date = dayList[position]
+
+                var clickDay: String = "${year}/${month}/${date}"
+
+                click_date = clickDay
+
+                viewModel.updateDate(clickDay)
+            }
+        })
     }
 
     private fun yearMonthFromDate(date: LocalDate): String{

@@ -1,18 +1,17 @@
 package com.example.asd
 
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.telephony.SmsManager
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -50,6 +49,27 @@ class Main : AppCompatActivity() {
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
         }
+        // DND part
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+        // Turn on DND
+        fun onDND(){
+            if (checkNotificationPolicyAccess(notificationManager)){
+                notificationManager.onDOD()
+                toast("Do Not Disturb turned on.")
+            }
+            val intent = Intent(this@Main, Studymode::class.java)
+            startActivity(intent)
+        }
+
+        // Turn off DND
+        fun offDND(){
+            if (checkNotificationPolicyAccess(notificationManager)){
+                notificationManager.offDOD()
+                toast("Do Not Disturb turned off")
+            }
+        }
+        onDND()
 
         // Navigation bar control
         val navigationbar_book = findViewById<ImageButton>(R.id.navigation_bar_book)
@@ -67,24 +87,7 @@ class Main : AppCompatActivity() {
             overridePendingTransition(R.anim.slide_right_enter,R.anim.slide_right_exit)
         }
 
-        // DND part
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-        // Turn on DND
-        fun onDND(){
-            if (checkNotificationPolicyAccess(notificationManager)){
-                notificationManager.onDOD()
-                toast("Do Not Disturb turned on.")
-            }
-        }
-
-        // Turn off DND
-        fun offDND(){
-            if (checkNotificationPolicyAccess(notificationManager)){
-                notificationManager.offDOD()
-                toast("Do Not Disturb turned off")
-            }
-        }
 
 
         //뷰모델 받아오기
@@ -106,6 +109,7 @@ class Main : AppCompatActivity() {
         findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
 
     }
+
 
 
     //DND기능
