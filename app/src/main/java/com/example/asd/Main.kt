@@ -10,7 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.telephony.SmsManager
+import android.util.Log
 import android.widget.ImageButton
+import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
@@ -21,6 +23,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.asd.todos.Todo
 import com.example.asd.todos.TodoViewModel
 import com.example.asd.todos.ViewModelProviderFactory
+import com.example.discoding.SendUserInfo
+import com.example.discoding.get_message
+import com.google.gson.GsonBuilder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -34,9 +44,61 @@ class Main : AppCompatActivity() {
     //년월 변수
     lateinit var selectedDate: LocalDate
 
+//    var gson= GsonBuilder().setLenient().create()
+//    private val retrofit = Retrofit.Builder()
+//        .baseUrl("http://selfstudy.kro.kr:5000/")
+//        .addConverterFactory(GsonConverterFactory.create(gson))
+//        .build()
+//
+//    private val LedService = retrofit.create(sendLedSeekBarValue::class.java)
+//    private val SoundService = retrofit.create(sendSoundSeekBarValue::class.java)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
+
+//        findViewById<SeekBar>(R.id.LedSeekBar).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+//            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+//            }
+//
+//            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+//            }
+//
+//            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+//                LedService.SendLedValue(findViewById<SeekBar>(R.id.LedSeekBar).progress).enqueue(object :
+//                    Callback<get_message> {
+//                    override fun onResponse(
+//                        call: Call<get_message>,
+//                        response: Response<get_message>
+//                    ) {
+//                    }
+//                    override fun onFailure(call: Call<get_message>, t: Throwable) {
+//                        Log.d("result",t.toString())
+//                    }
+//                })
+//            }
+//        })
+//        findViewById<SeekBar>(R.id.SoundSeekBar).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+//            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+//            }
+//
+//            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+//            }
+//
+//            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+//                SoundService.SendSoundValue(findViewById<SeekBar>(R.id.LedSeekBar).progress).enqueue(object :
+//                    Callback<get_message> {
+//                    override fun onResponse(
+//                        call: Call<get_message>,
+//                        response: Response<get_message>
+//                    ) {
+//                    }
+//                    override fun onFailure(call: Call<get_message>, t: Throwable) {
+//                        Log.d("result",t.toString())
+//                    }
+//                })
+//            }
+//        })
 
         // DND part
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -58,6 +120,7 @@ class Main : AppCompatActivity() {
                 toast("Do Not Disturb turned off")
             }
         }
+
 
         selectedDate = LocalDate.now()
         findViewById<TextView>(R.id.main_todolist_dash_middle).text = yearMonthFromDate(selectedDate)

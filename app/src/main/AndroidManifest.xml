@@ -37,6 +37,8 @@
             android:exported="true"></activity>
         <activity android:name=".Calendar" />
         <activity android:name=".setting" />
+        <activity android:name=".Studymode" />
+        <activity android:name=".getAddress" />
     </application>
 
 </manifest>
