@@ -8,18 +8,45 @@ import android.provider.CallLog
 import android.telephony.ServiceState
 import android.telephony.TelephonyManager
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil.setContentView
+import com.example.asd.getCode.get_Code
+import com.google.gson.GsonBuilder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.jar.Manifest
 
 
-class Studymode : AppCompatActivity(){
+class Studymode : AppCompatActivity() {
+//    var gson= GsonBuilder().setLenient().create()
+//    private val retrofit = Retrofit.Builder()
+//        .baseUrl("서버주소")
+//        .addConverterFactory(GsonConverterFactory.create(gson))
+//        .build()
+//
+//    private val sendStudyTime = retrofit.create(SendStudyTime::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.studymode)
 
+//        sendStudyTime.SendStudyTime(10, 10).enqueue(object :
+//            Callback<Message> {
+//            override fun onResponse(
+//                call: Call<Message>,
+//                response: Response<Message>
+//            ) {
+//
+//            }
+//            override fun onFailure(call: Call<Message>, t: Throwable) {
+//                Log.d("result",t.toString())
+//            }
+//        })
     }
 }
 

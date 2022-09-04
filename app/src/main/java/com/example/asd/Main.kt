@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,6 +16,8 @@ import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -41,6 +44,13 @@ class Main : AppCompatActivity() {
     lateinit var viewModel : TodoViewModel
     lateinit var todoList: MutableLiveData<MutableList<Todo>>
 
+    var permissions = arrayOf(
+        android.Manifest.permission.READ_CALL_LOG,
+        android.Manifest.permission.SEND_SMS,
+        android.Manifest.permission.WRITE_CONTACTS,
+        android.Manifest.permission.READ_CONTACTS,
+    )
+
     //년월 변수
     lateinit var selectedDate: LocalDate
 
@@ -55,6 +65,11 @@ class Main : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        checkAndstart()
+        startProcess()
+    }
+
+    private fun startProcess() {
         setContentView(R.layout.main)
 
 //        findViewById<SeekBar>(R.id.LedSeekBar).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -170,6 +185,29 @@ class Main : AppCompatActivity() {
         findViewById<RecyclerView>(R.id.recyclerView).adapter = todayAdapter
         findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
 
+        //여기서부터 nfc 짜
+        onDND()
+
+    }
+    private fun checkAndstart() {
+        if ( isLower23() || isPermitted()){
+            startProcess()
+        }else{
+            ActivityCompat.requestPermissions(this, permissions, 99)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun isPermitted(): Boolean {
+        for(perm in permissions){
+            if (checkSelfPermission(perm) != PackageManager.PERMISSION_GRANTED){
+                return false
+            }
+        }
+        return true
+    }
+    private fun isLower23(): Boolean {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M
     }
 
 
@@ -212,6 +250,7 @@ class Main : AppCompatActivity() {
     fun setList() {
         todoList.value = viewModel.getTodayList()
     }
+
 }
 
 
@@ -221,6 +260,7 @@ private fun yearMonthFromDate(date: LocalDate): String{
     //받아온 날짜를 해당 포맷으로 변경
     return date.format(formatter)
 }
+
 
 
 

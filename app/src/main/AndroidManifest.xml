@@ -5,6 +5,13 @@
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" /> <!-- 인터넷 연결 -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -38,7 +45,14 @@
         <activity android:name=".Calendar" />
         <activity android:name=".setting" />
         <activity android:name=".Studymode" />
-        <activity android:name=".getAddress" />
+        <receiver android:name=".CallReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE"/>
+                <action android:name="com.example.asd.GET"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
