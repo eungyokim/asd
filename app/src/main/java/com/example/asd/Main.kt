@@ -54,9 +54,10 @@ class Main : AppCompatActivity() {
     //년월 변수
     lateinit var selectedDate: LocalDate
 
+    // 자체 백엔드 서버 연동
 //    var gson= GsonBuilder().setLenient().create()
 //    private val retrofit = Retrofit.Builder()
-//        .baseUrl("http://selfstudy.kro.kr:5000/")
+//        .baseUrl("https://asdapi.implude.kr/")
 //        .addConverterFactory(GsonConverterFactory.create(gson))
 //        .build()
 //
@@ -71,7 +72,17 @@ class Main : AppCompatActivity() {
 
     private fun startProcess() {
         setContentView(R.layout.main)
+        val sharedPreference = getSharedPreferences("uuid", 0)
+        val editor  : SharedPreferences.Editor = sharedPreference.edit()
 
+        // DND part
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+
+        selectedDate = LocalDate.now()
+        findViewById<TextView>(R.id.main_todolist_dash_middle).text = yearMonthFromDate(selectedDate)
+
+        // LED 밝기 제어
 //        findViewById<SeekBar>(R.id.LedSeekBar).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 //            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 //            }
@@ -93,6 +104,8 @@ class Main : AppCompatActivity() {
 //                })
 //            }
 //        })
+
+        // 음량 제어
 //        findViewById<SeekBar>(R.id.SoundSeekBar).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 //            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 //            }
@@ -115,9 +128,6 @@ class Main : AppCompatActivity() {
 //            }
 //        })
 
-        // DND part
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-
         // Turn on DND
         fun onDND(){
             if (checkNotificationPolicyAccess(notificationManager)){
@@ -136,15 +146,8 @@ class Main : AppCompatActivity() {
             }
         }
 
-
-        selectedDate = LocalDate.now()
-        findViewById<TextView>(R.id.main_todolist_dash_middle).text = yearMonthFromDate(selectedDate)
-
-        val sharedPreference = getSharedPreferences("uuid", 0)
-        val editor  : SharedPreferences.Editor = sharedPreference.edit()
-
         // uuid 내부저장 일치 여부 확인.
-        if (sharedPreference.getString("uuid", null) == null){
+        if (sharedPreference.getString("uuid", null) == "stacsad"){
             val intent = Intent(this@Main, setting::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
@@ -167,7 +170,7 @@ class Main : AppCompatActivity() {
         }
 
 
-        //뷰모델 받아오기
+        //뷰모델 받아오기 - Todo
         viewModel = ViewModelProvider(this, ViewModelProviderFactory(this.application))
             .get(TodoViewModel::class.java)
 
@@ -185,10 +188,8 @@ class Main : AppCompatActivity() {
         findViewById<RecyclerView>(R.id.recyclerView).adapter = todayAdapter
         findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
 
-        //여기서부터 nfc 짜
-        onDND()
-
     }
+    // Version Check for Send sms and detect call
     private fun checkAndstart() {
         if ( isLower23() || isPermitted()){
             startProcess()
@@ -211,7 +212,7 @@ class Main : AppCompatActivity() {
     }
 
 
-    //DND기능
+    //DND
     // Method to check notification policy access status
     private fun checkNotificationPolicyAccess(notificationManager:NotificationManager):Boolean{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

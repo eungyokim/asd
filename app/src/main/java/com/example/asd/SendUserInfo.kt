@@ -16,6 +16,7 @@ data class get_message(
 interface SendUserInfo {
     @FormUrlEncoded
     @POST("/send_user_info")
+    @Headers("SN: stacasd")
     fun SendUserInfo(
         @Field("name") name: String,
         @Field("age") age: String,

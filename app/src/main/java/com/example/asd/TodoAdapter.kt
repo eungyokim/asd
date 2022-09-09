@@ -60,8 +60,6 @@ class TodoAdapter(val context: Context,
 
 
     inner class TodoViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
-        val todoInfo = itemView.findViewById<ConstraintLayout>(R.id.todo_info)
-        val todoText = itemView.findViewById<TextView>(R.id.todo_text)
         val todoTime = itemView.findViewById<TextView>(R.id.todo_time)
         val todoDelete = itemView.findViewById<ImageView>(R.id.todo_delete)
     }
