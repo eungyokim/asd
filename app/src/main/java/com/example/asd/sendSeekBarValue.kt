@@ -1,33 +1,30 @@
 package com.example.asd
 
-import com.example.discoding.get_message
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
-data class get_message(
-    val msg: String
-)
-
 // LED control
 interface sendLedSeekBarValue {
     @FormUrlEncoded
+    @Headers("SN:  64ba59ff-98dc-4f9d-a485-8e209b9957b6")
     @POST("/sendLedValue")
-    @Headers("SN: stacasd")
     fun SendLedValue(
         @Field("value") value: Int?,
-    ):Call<get_message>
+        @Field("Hex") Hex : String?,
+    ):Call<getMsg>
 }
 // Sound control
 interface sendSoundSeekBarValue{
     @FormUrlEncoded
-    @Headers("SN: stacasd")
-        @POST("/sendSoundValue")
+    @Headers("SN: 64ba59ff-98dc-4f9d-a485-8e209b9957b6")
+    @POST("/sendSoundValue")
     fun SendSoundValue(
         @Field("value") value: Int?,
-    ):Call<get_message>
+        @Field("Hex") Hex : String?,
+        ):Call<getMsg>
 }
 
 

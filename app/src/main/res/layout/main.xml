@@ -89,6 +89,7 @@
                             app:layout_constraintTop_toBottomOf="@id/LedTitle"
                             />
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/SoundPart"

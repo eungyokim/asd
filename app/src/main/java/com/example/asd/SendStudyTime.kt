@@ -13,14 +13,14 @@ data class Message(
 interface startStudymode {
     @FormUrlEncoded
     @POST("/studymode/start/")
-    @Headers("SN: stacasd")
+    @Headers("SN: 64ba59ff-98dc-4f9d-a485-8e209b9957b6")
     fun startStudymode(
     ): Call<Message>
 }
 interface stopStudymode {
     @FormUrlEncoded
     @POST("/studymode/stop/")
-    @Headers("SN: stacasd")
+    @Headers("SN: 64ba59ff-98dc-4f9d-a485-8e209b9957b6")
     fun stopStudymode(
     ): Call<Message>
 }

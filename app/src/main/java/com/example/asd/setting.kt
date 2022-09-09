@@ -11,7 +11,9 @@ import android.view.ViewGroup
 import android.webkit.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import com.example.asd.getCode.get_Code
+import com.example.asd.SendUserInfo
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,12 +29,12 @@ class setting : AppCompatActivity() {
 
     var gson= GsonBuilder().setLenient().create()
 
-//    private val retrofit = Retrofit.Builder()
-//            .baseUrl("https://asdapi.implude.kr/")
-//        .addConverterFactory(GsonConverterFactory.create(gson))
-//        .build()
-//
-//    private val service = retrofit.create(SendUserInfo::class.java)
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://asdapi.implude.kr/")
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+
+    private val service = retrofit.create(SendUserInfo::class.java)
 
     private val retrofit1 = Retrofit.Builder()
         .baseUrl("https://open.neis.go.kr/")
@@ -43,7 +45,7 @@ class setting : AppCompatActivity() {
 
     lateinit var WhereSchool: String
 
-    lateinit var gender: String
+    var gender: String? = "male"
 
 
 
@@ -76,7 +78,6 @@ class setting : AppCompatActivity() {
                     }
                 }
             }
-            Log.e("Fdasf", gender)
         }
 
         findViewById<CheckBox>(R.id.setting_userinfo_gender_male).setOnCheckedChangeListener(listener)
@@ -117,20 +118,21 @@ class setting : AppCompatActivity() {
                                         Log.e("Fdasf","${WhereSchool} ${it!!.oRGRDNZC.toString()}")
                                     }
                                     // 사용자 정보 저장
-//                                    service.SendUserInfo(name, age, gender, uuid, it?.sDSCHULCODE.toString()).enqueue(object :
-//                                        Callback<get_message> {
-//                                        override fun onResponse(
-//                                            call: Call<get_message>,
-//                                            response: Response<get_message>
-//                                        ) {
+                                    service.SendUserInfo(name, age, gender, uuid, it?.sDSCHULCODE.toString()).enqueue(object :
+                                        Callback<getMsg> {
+                                        override fun onResponse(
+                                            call: Call<getMsg>,
+                                            response: Response<getMsg>
+                                        ) {
+                                            Log.e("fdaf", response.body().toString())
                                         Toast.makeText(this@setting, "성공적으로 사용자 정보가 등록되었습니다.", Toast.LENGTH_SHORT).show()
                                         editor.putString("uuid", it?.sDSCHULCODE.toString())
                                         editor.commit()
-//                                        }
-//                                        override fun onFailure(call: Call<get_message>, t: Throwable) {
-//                                            Log.d("result",t.toString())
-//                                        }
-//                                    })
+                                        }
+                                        override fun onFailure(call: Call<getMsg>, t: Throwable) {
+                                            Log.d("result",t.toString())
+                                        }
+                                    })
                                 }
 
                             }
