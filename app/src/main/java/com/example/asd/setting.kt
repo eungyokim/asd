@@ -11,7 +11,9 @@ import android.view.ViewGroup
 import android.webkit.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import com.example.asd.getCode.get_Code
+import com.example.asd.SendUserInfo
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,12 +29,12 @@ class setting : AppCompatActivity() {
 
     var gson= GsonBuilder().setLenient().create()
 
-//    private val retrofit = Retrofit.Builder()
-//            .baseUrl("http://selfstudy.kro.kr:5000/")
-//        .addConverterFactory(GsonConverterFactory.create(gson))
-//        .build()
-//
-//    private val service = retrofit.create(SendUserInfo::class.java)
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://asdapi.implude.kr/")
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+
+    private val service = retrofit.create(SendUserInfo::class.java)
 
     private val retrofit1 = Retrofit.Builder()
         .baseUrl("https://open.neis.go.kr/")
@@ -42,6 +44,10 @@ class setting : AppCompatActivity() {
     private val getCode = retrofit1.create(SendSchoolName::class.java)
 
     lateinit var WhereSchool: String
+
+    var gender: String? = "male"
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,10 +64,30 @@ class setting : AppCompatActivity() {
         spinnerWhich.adapter = ArrayAdapter.createFromResource(this, R.array.WhichSort, android.R.layout.simple_spinner_dropdown_item)
 
 
+        // Check Box Control.
+        var listener = CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked) {
+                when (buttonView.id) {
+                    R.id.setting_userinfo_gender_male -> {
+                        gender = "male"
+                        findViewById<CheckBox>(R.id.setting_userinfo_gender_female).isChecked = false
+                    }
+                    R.id.setting_userinfo_gender_female -> {
+                        gender = "female"
+                        findViewById<CheckBox>(R.id.setting_userinfo_gender_male).isChecked = false
+                    }
+                }
+            }
+        }
+
+        findViewById<CheckBox>(R.id.setting_userinfo_gender_male).setOnCheckedChangeListener(listener)
+        findViewById<CheckBox>(R.id.setting_userinfo_gender_female).setOnCheckedChangeListener(listener)
+
+
+
         setting_button.setOnClickListener {
             var name = findViewById<EditText>(R.id.setting_userinfo_name).getText().toString()
             var age = findViewById<EditText>(R.id.setting_userinfo_age).getText().toString()
-            var gender = findViewById<EditText>(R.id.setting_userinfo_gender).getText().toString()
             var uuid = findViewById<EditText>(R.id.setting_userinfo_code).getText().toString()
             var school = findViewById<EditText>(R.id.setting_userinfo_school).getText().toString()
             var whereIs = spinnerWhere.selectedItem.toString()
@@ -82,7 +108,6 @@ class setting : AppCompatActivity() {
                         call: Call<get_Code>,
                         response: Response<get_Code>
                     ) {
-
                         response.body()?.let {
                             it.schoolInfo?.forEach{ book->
                                 book!!.row?.forEach { it ->
@@ -93,20 +118,21 @@ class setting : AppCompatActivity() {
                                         Log.e("Fdasf","${WhereSchool} ${it!!.oRGRDNZC.toString()}")
                                     }
                                     // 사용자 정보 저장
-//                                    service.SendUserInfo(name, age, gender, uuid, it?.sDSCHULCODE.toString()).enqueue(object :
-//                                        Callback<get_message> {
-//                                        override fun onResponse(
-//                                            call: Call<get_message>,
-//                                            response: Response<get_message>
-//                                        ) {
-                                    Toast.makeText(this@setting, "성공적으로 사용자 정보가 등록되었습니다.", Toast.LENGTH_SHORT).show()
-                                    editor.putString("uuid", it?.sDSCHULCODE.toString())
-                                    editor.commit()
-//                                        }
-//                                        override fun onFailure(call: Call<get_message>, t: Throwable) {
-//                                            Log.d("result",t.toString())
-//                                        }
-//                                    })
+                                    service.SendUserInfo(name, age, gender, uuid, it?.sDSCHULCODE.toString()).enqueue(object :
+                                        Callback<getMsg> {
+                                        override fun onResponse(
+                                            call: Call<getMsg>,
+                                            response: Response<getMsg>
+                                        ) {
+                                            Log.e("fdaf", response.body().toString())
+                                        Toast.makeText(this@setting, "성공적으로 사용자 정보가 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                                        editor.putString("uuid", it?.sDSCHULCODE.toString())
+                                        editor.commit()
+                                        }
+                                        override fun onFailure(call: Call<getMsg>, t: Throwable) {
+                                            Log.d("result",t.toString())
+                                        }
+                                    })
                                 }
 
                             }
@@ -123,10 +149,10 @@ class setting : AppCompatActivity() {
         findViewById<TextView>(R.id.setting_userinfo_school).setOnClickListener {
             showKakaoAddressWebView()
         }
+        navigationBar()
+    }
 
-
-
-
+    private fun navigationBar() {
         val navigationbar_book = findViewById<ImageButton>(R.id.navigation_bar_book)
         val navigationbar_home = findViewById<ImageButton>(R.id.navigation_bar_home)
 
@@ -140,8 +166,8 @@ class setting : AppCompatActivity() {
             startActivity(intent)
             overridePendingTransition(R.anim.slide_left_enter,R.anim.slide_left_exit)
         }
-
     }
+
     private val client: WebViewClient = object : WebViewClient() {
 
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {

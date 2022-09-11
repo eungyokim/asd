@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -43,13 +44,15 @@ class Calendar : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.calendar)
 
+        // 달력의 날짜를 누르지 않고 'Todo'추가 시 오늘의 날짜로 입력이 된다.
+        dayText = "${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}"
+
         // Todo List
         //뷰모델 받아오기
         viewModel = ViewModelProvider(this, ViewModelProviderFactory(this.application))
             .get(TodoViewModel::class.java)
 
         //recycler view에 보여질 아이템 Room에서 받아오기
-
         viewModel.date.observe(this, androidx.lifecycle.Observer {
             Log.d("date",it.toString());
             val list = viewModel.getSelectedList(it.toString())
@@ -61,6 +64,7 @@ class Calendar : AppCompatActivity() {
             findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
         })
 
+        // calendar
         //binding 초기화
         binding = DataBindingUtil.setContentView(this, R.layout.calendar)
 
@@ -82,31 +86,11 @@ class Calendar : AppCompatActivity() {
             setMonthView()
         }
 
-        val navigationbar_book = findViewById<ImageButton>(R.id.navigation_bar_book)
-        val navigationbar_home = findViewById<ImageButton>(R.id.navigation_bar_home)
-        val navigationbar_info = findViewById<ImageButton>(R.id.navigation_bar_info)
-
-        navigationbar_book.setOnClickListener {
-            val intent = Intent(this@Calendar, Calendar::class.java)
-            startActivity(intent)
-        }
-        navigationbar_home.setOnClickListener {
-            val intent = Intent(this@Calendar, Main::class.java)
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
-        }
-        navigationbar_info.setOnClickListener {
-            val intent = Intent(this@Calendar, setting::class.java)
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
-        }
-
+        // Add Todo List
         findViewById<Button>(R.id.add_button).setOnClickListener {
             if (findViewById<TextView>(R.id.recycleradd).text.toString() != "") {
                 val rnd = Random()
                 val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-
-                var Date = java.util.Calendar.getInstance()
 
                 var year = dayText.split("/")[0]
                 var month = dayText.split("/")[1]
@@ -120,9 +104,28 @@ class Calendar : AppCompatActivity() {
                 setList("${year}/${month}/${date}")
                 findViewById<TextView>(R.id.recycleradd).setText("")
             }
+            else {
+                setList("${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}")
+                findViewById<TextView>(R.id.recycleradd).setText("")
+            }
+        }
+        findViewById<Button>(R.id.add_button).performClick()
+
+        // Navigation Bar
+        val navigationbar_home = findViewById<ImageButton>(R.id.navigation_bar_home)
+        val navigationbar_info = findViewById<ImageButton>(R.id.navigation_bar_info)
+
+        navigationbar_home.setOnClickListener {
+            val intent = Intent(this@Calendar, Main::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
+        }
+        navigationbar_info.setOnClickListener {
+            val intent = Intent(this@Calendar, setting::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
         }
     }
-
 
     //날짜 화면에 보여주기
     private fun setMonthView() {

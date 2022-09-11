@@ -25,23 +25,34 @@ import java.util.jar.Manifest
 class Studymode : AppCompatActivity() {
 //    var gson= GsonBuilder().setLenient().create()
 //    private val retrofit = Retrofit.Builder()
-//        .baseUrl("서버주소")
+//        .baseUrl("https://asdapi.implude.kr/")
 //        .addConverterFactory(GsonConverterFactory.create(gson))
 //        .build()
 //
-//    private val sendStudyTime = retrofit.create(SendStudyTime::class.java)
+//    private val startStudymode = retrofit.create(startStudymode::class.java)
+//    private val stopStudymode = retrofit.create(stopStudymode::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.studymode)
 
-//        sendStudyTime.SendStudyTime(10, 10).enqueue(object :
+//        startStudymode.SendStudyTime().enqueue(object :
 //            Callback<Message> {
 //            override fun onResponse(
 //                call: Call<Message>,
 //                response: Response<Message>
 //            ) {
-//
+//            }
+//            override fun onFailure(call: Call<Message>, t: Throwable) {
+//                Log.d("result",t.toString())
+//            }
+//        })
+        //        stopStudymode.SendStudyTime().enqueue(object :
+//            Callback<Message> {
+//            override fun onResponse(
+//                call: Call<Message>,
+//                response: Response<Message>
+//            ) {
 //            }
 //            override fun onFailure(call: Call<Message>, t: Throwable) {
 //                Log.d("result",t.toString())

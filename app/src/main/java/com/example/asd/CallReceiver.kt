@@ -8,55 +8,27 @@ import android.telephony.TelephonyManager
 import android.widget.Toast
 import android.provider.CallLog
 import android.provider.Settings
+import android.util.Log
 
 class CallReceiver:BroadcastReceiver() {
-    var searchText = ""
-    var sortText = "asd"
 
     override fun onReceive(context: Context?, intent: Intent?) {
         val zenMode = Settings.Global.getInt(context?.contentResolver, "zen_mode")
-        if(intent!!.getStringExtra(TelephonyManager.EXTRA_STATE) == TelephonyManager.EXTRA_STATE_RINGING){
-            if (zenMode == 1){
-                showToastMsg(context!!,"Incoming...")
-                getPhoneNumbers(context!!, sortText, searchText)
+        val smsManager: SmsManager = SmsManager.getDefault()
+
+        // 방해금지모드가 켜져(공부모드를 실행중이다.) 있는 상황에서 통화가 수신되면 문자를 회신한다.
+        if(intent!!.getStringExtra(TelephonyManager.EXTRA_STATE) == TelephonyManager.EXTRA_STATE_IDLE){
+            if(zenMode == 1){
+                if( intent!!.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER) != null){
+                    smsManager.sendTextMessage(
+                        intent!!.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER),
+                        null,
+                        "<자동발신 - ASD>현재 사용자는 학습하고 있습니다. 잠시만 기다려주세요.",
+                        null,
+                        null
+                    )
+                }
             }
-
         }
-
-    }
-    fun showToastMsg(c:Context, msg: String){
-        val toast = Toast.makeText(c, msg, Toast.LENGTH_LONG)
-        toast.show()
-    }
-    fun getPhoneNumbers(c:Context, sort:String, name:String): List<String>{
-        val list = mutableListOf<String>()
-
-        val callLogUri = CallLog.Calls.CONTENT_URI
-        val proj = arrayOf(
-            CallLog.Calls.PHONE_ACCOUNT_ID,
-            CallLog.Calls.CACHED_NAME,
-            CallLog.Calls.NUMBER,
-            CallLog.Calls.CACHED_PHOTO_URI,
-        )
-        val cursor = c.contentResolver.query(callLogUri, proj, null,null,null)
-        cursor?.moveToFirst()
-        if(cursor?.isFirst == true){
-            val id = cursor?.getString(0)
-            val name = cursor?.getString(1)
-            var number = cursor?.getString(2)
-            val photo = cursor?.getString(3)
-
-            val smsManager: SmsManager = SmsManager.getDefault()
-
-            smsManager.sendTextMessage(
-                number,
-                null,
-                "<자동 발신>사용자는 현재 공부중입니다. 나중에 다시 걸어주세요.",
-                null,
-                null
-            )
-        }
-
-        return list
     }
 }

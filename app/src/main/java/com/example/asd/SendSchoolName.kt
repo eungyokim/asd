@@ -6,6 +6,7 @@ import retrofit2.http.*
 
 
 interface SendSchoolName {
+    // 학교 CODE 받아오는 외부 API 사용
     @GET("/hub/schoolInfo?Type=json&pIndex=1&pSize=100%2F/")
     fun SendUserInfo(
         @Query("LCTN_SC_NM") LCTN_SC_NM: String,

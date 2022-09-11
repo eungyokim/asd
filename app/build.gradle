@@ -69,4 +69,5 @@ dependencies {
     }
     implementation "kr.go.neis.api:neis-api:4.0.1"
 
+    implementation 'com.github.dhaval2404:colorpicker:2.0'
 }

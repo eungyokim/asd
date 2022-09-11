@@ -1,9 +1,14 @@
 package com.example.asd
 
+import android.content.Intent
+import android.graphics.Color
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.collections.ArrayList
 
@@ -26,8 +31,15 @@ class CalendarAdapter(private val dayList: ArrayList<String>): RecyclerView.Adap
         //     '10/21' 등등
         holder.dayText.text = dayList[holder.adapterPosition]
 
+        // 제대로 클릭을 했는지 확인함.
         holder.itemView.setOnClickListener {
             itemClickListner.onClick(it, position)
+            holder.itemView.setBackgroundResource(R.color.button_blue)
+            holder.dayText.setTextColor(Color.WHITE)
+            Handler().postDelayed({
+                holder.itemView.setBackgroundResource(R.color.True_white)
+                holder.dayText.setTextColor(Color.BLACK)
+            }, 1000)
         }
     }
 

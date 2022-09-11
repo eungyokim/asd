@@ -1,23 +1,26 @@
 package com.example.asd
 
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.Color.parseColor
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
-import android.telephony.SmsManager
 import android.util.Log
+import android.view.View
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -26,8 +29,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.asd.todos.Todo
 import com.example.asd.todos.TodoViewModel
 import com.example.asd.todos.ViewModelProviderFactory
-import com.example.discoding.SendUserInfo
-import com.example.discoding.get_message
+import com.github.dhaval2404.colorpicker.ColorPickerDialog
+import com.github.dhaval2404.colorpicker.model.ColorShape
 import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
@@ -54,14 +57,18 @@ class Main : AppCompatActivity() {
     //년월 변수
     lateinit var selectedDate: LocalDate
 
-//    var gson= GsonBuilder().setLenient().create()
-//    private val retrofit = Retrofit.Builder()
-//        .baseUrl("http://selfstudy.kro.kr:5000/")
-//        .addConverterFactory(GsonConverterFactory.create(gson))
-//        .build()
-//
-//    private val LedService = retrofit.create(sendLedSeekBarValue::class.java)
-//    private val SoundService = retrofit.create(sendSoundSeekBarValue::class.java)
+    var selectedColor: String? = "#ffffff"
+
+
+    // 자체 백엔드 서버 연동
+    var gson= GsonBuilder().setLenient().create()
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://asdapi.implude.kr/")
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+
+    private val LedService = retrofit.create(sendLedSeekBarValue::class.java)
+    private val SoundService = retrofit.create(sendSoundSeekBarValue::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,52 +78,80 @@ class Main : AppCompatActivity() {
 
     private fun startProcess() {
         setContentView(R.layout.main)
-
-//        findViewById<SeekBar>(R.id.LedSeekBar).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-//            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-//            }
-//
-//            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-//            }
-//
-//            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-//                LedService.SendLedValue(findViewById<SeekBar>(R.id.LedSeekBar).progress).enqueue(object :
-//                    Callback<get_message> {
-//                    override fun onResponse(
-//                        call: Call<get_message>,
-//                        response: Response<get_message>
-//                    ) {
-//                    }
-//                    override fun onFailure(call: Call<get_message>, t: Throwable) {
-//                        Log.d("result",t.toString())
-//                    }
-//                })
-//            }
-//        })
-//        findViewById<SeekBar>(R.id.SoundSeekBar).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-//            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-//            }
-//
-//            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-//            }
-//
-//            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-//                SoundService.SendSoundValue(findViewById<SeekBar>(R.id.LedSeekBar).progress).enqueue(object :
-//                    Callback<get_message> {
-//                    override fun onResponse(
-//                        call: Call<get_message>,
-//                        response: Response<get_message>
-//                    ) {
-//                    }
-//                    override fun onFailure(call: Call<get_message>, t: Throwable) {
-//                        Log.d("result",t.toString())
-//                    }
-//                })
-//            }
-//        })
+        val sharedPreference = getSharedPreferences("uuid", 0)
+        val editor  : SharedPreferences.Editor = sharedPreference.edit()
 
         // DND part
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+
+        selectedDate = LocalDate.now()
+        findViewById<TextView>(R.id.main_todolist_dash_middle).text = yearMonthFromDate(selectedDate)
+
+        findViewById<ImageButton>(R.id.bulb).setOnClickListener {
+            ColorPickerDialog
+                .Builder(this)        				// Pass Activity Instance
+                .setTitle("Pick LED Color")
+                .setDefaultColor(R.color.True_black)
+                .setNegativeButton("뒤로가기")
+                .setPositiveButton("선택")// Default "Choose Color"
+                .setColorShape(ColorShape.CIRCLE)   // Default ColorShape.CIRCLE
+                .setDefaultColor(R.color.True_white)     // Pass Default Color
+                .setColorListener { color, colorHex ->
+                    selectedColor = colorHex
+                    findViewById<ImageButton>(R.id.bulb).backgroundTintList = ColorStateList.valueOf(color)
+                }
+                .show()
+        }
+
+
+
+        // LED 밝기 제어
+        findViewById<SeekBar>(R.id.LedSeekBar).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                LedService.SendLedValue(findViewById<SeekBar>(R.id.LedSeekBar).progress, selectedColor).enqueue(object :
+                    Callback<getMsg> {
+                    override fun onResponse(
+                        call: Call<getMsg>,
+                        response: Response<getMsg>
+                    ) {
+                        Log.e("Fdasfsdaf", response.body().toString())
+                    }
+                    override fun onFailure(call: Call<getMsg>, t: Throwable) {
+                        Log.d("result",t.toString())
+                    }
+                })
+            }
+        })
+
+        // 음량 제어
+        findViewById<SeekBar>(R.id.SoundSeekBar).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                SoundService.SendSoundValue(findViewById<SeekBar>(R.id.LedSeekBar).progress, selectedColor).enqueue(object :
+                    Callback<getMsg> {
+                    override fun onResponse(
+                        call: Call<getMsg>,
+                        response: Response<getMsg>
+                    ) {
+                    }
+                    override fun onFailure(call: Call<getMsg>, t: Throwable) {
+                        Log.d("result",t.toString())
+                    }
+                })
+            }
+        })
 
         // Turn on DND
         fun onDND(){
@@ -136,15 +171,8 @@ class Main : AppCompatActivity() {
             }
         }
 
-
-        selectedDate = LocalDate.now()
-        findViewById<TextView>(R.id.main_todolist_dash_middle).text = yearMonthFromDate(selectedDate)
-
-        val sharedPreference = getSharedPreferences("uuid", 0)
-        val editor  : SharedPreferences.Editor = sharedPreference.edit()
-
         // uuid 내부저장 일치 여부 확인.
-        if (sharedPreference.getString("uuid", null) == null){
+        if (sharedPreference.getString("uuid", null) == "stacsad"){
             val intent = Intent(this@Main, setting::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
@@ -167,7 +195,7 @@ class Main : AppCompatActivity() {
         }
 
 
-        //뷰모델 받아오기
+        //뷰모델 받아오기 - Todo
         viewModel = ViewModelProvider(this, ViewModelProviderFactory(this.application))
             .get(TodoViewModel::class.java)
 
@@ -185,10 +213,8 @@ class Main : AppCompatActivity() {
         findViewById<RecyclerView>(R.id.recyclerView).adapter = todayAdapter
         findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
 
-        //여기서부터 nfc 짜
-        onDND()
-
     }
+    // Version Check for Send sms and detect call
     private fun checkAndstart() {
         if ( isLower23() || isPermitted()){
             startProcess()
@@ -211,7 +237,7 @@ class Main : AppCompatActivity() {
     }
 
 
-    //DND기능
+    //DND
     // Method to check notification policy access status
     private fun checkNotificationPolicyAccess(notificationManager:NotificationManager):Boolean{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -260,7 +286,4 @@ private fun yearMonthFromDate(date: LocalDate): String{
     //받아온 날짜를 해당 포맷으로 변경
     return date.format(formatter)
 }
-
-
-
 

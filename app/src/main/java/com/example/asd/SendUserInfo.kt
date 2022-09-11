@@ -1,28 +1,24 @@
-package com.example.discoding
+package com.example.asd
 
 
-import com.google.gson.GsonBuilder
-import com.google.gson.annotations.SerializedName
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.*
 
-data class get_message(
-    val msg: String
+data class getMsg(
+    val msg: String? = null
 )
 
 interface SendUserInfo {
     @FormUrlEncoded
+    @Headers("SN: 64ba59ff-98dc-4f9d-a485-8e209b9957b6")
     @POST("/send_user_info")
     fun SendUserInfo(
-        @Field("name") name: String,
-        @Field("age") age: String,
-        @Field("gender") gender: String,
-        @Field("uuid") uuid: String,
+        @Field("name") name: String?,
+        @Field("age") age: String?,
+        @Field("gender") gender: String?,
+        @Field("uuid") uuid: String?,
         @Field("school") school: String,
-    ): Call<get_message>
+    ): Call<getMsg>
 
 }
 

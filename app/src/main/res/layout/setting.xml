@@ -57,18 +57,32 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/setting_userinfo_name"
-                app:layout_constraintBottom_toTopOf="@id/setting_userinfo_gender"
+                app:layout_constraintBottom_toTopOf="@id/setting_userinfo_gender_male"
                 android:hint="나이"/>
-            <EditText
-                android:id="@+id/setting_userinfo_gender"
+
+            <CheckBox
+                android:id="@+id/setting_userinfo_gender_male"
                 android:layout_width="0dp"
+                app:layout_constraintWidth_percent="0.4"
                 android:layout_height="45dp"
-                app:layout_constraintWidth_percent="0.9"
-                app:layout_constraintRight_toRightOf="parent"
+                android:gravity="center_vertical"
+                android:checked="true"
+                android:text="남자"
                 app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/setting_userinfo_gender_female"
                 app:layout_constraintTop_toBottomOf="@id/setting_userinfo_age"
-                app:layout_constraintBottom_toTopOf="@id/setting_userinfo_code"
-                android:hint="성별"/>
+                app:layout_constraintBottom_toTopOf="@+id/setting_userinfo_code"/>
+            <CheckBox
+                android:id="@+id/setting_userinfo_gender_female"
+                android:layout_width="0dp"
+                app:layout_constraintWidth_percent="0.4"
+                android:layout_height="45dp"
+                android:text="여자"
+                android:gravity="center_vertical"
+                app:layout_constraintLeft_toRightOf="@id/setting_userinfo_gender_male"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/setting_userinfo_age"
+                app:layout_constraintBottom_toTopOf="@+id/setting_userinfo_code"/>
             <EditText
                 android:id="@+id/setting_userinfo_code"
                 android:layout_width="0dp"
@@ -76,7 +90,7 @@
                 app:layout_constraintWidth_percent="0.9"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/setting_userinfo_gender"
+                app:layout_constraintTop_toBottomOf="@id/setting_userinfo_gender_male"
                 app:layout_constraintBottom_toTopOf="@id/setting_userinfo_school"
                 android:hint="스피커 고유번호"/>
             <EditText
