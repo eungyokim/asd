@@ -1,6 +1,8 @@
 package com.example.asd
 
+import android.Manifest
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -8,6 +10,9 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Color.parseColor
+import android.nfc.NfcAdapter
+import android.nfc.Tag
+import android.nfc.tech.NfcA
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -41,21 +46,24 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
-class Main : AppCompatActivity() {
+class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
 
     lateinit var todayAdapter : TodayAdapter
     lateinit var viewModel : TodoViewModel
     lateinit var todoList: MutableLiveData<MutableList<Todo>>
 
     var permissions = arrayOf(
-        android.Manifest.permission.READ_CALL_LOG,
-        android.Manifest.permission.SEND_SMS,
-        android.Manifest.permission.WRITE_CONTACTS,
-        android.Manifest.permission.READ_CONTACTS,
+        Manifest.permission.READ_CALL_LOG,
+        Manifest.permission.SEND_SMS,
+        Manifest.permission.WRITE_CONTACTS,
+        Manifest.permission.READ_CONTACTS,
     )
 
     //년월 변수
     lateinit var selectedDate: LocalDate
+
+    private var nfcAdapter: NfcAdapter? = null
+    private lateinit var pendingIntent: PendingIntent
 
     var selectedColor: String? = "#ffffff"
 
@@ -70,9 +78,13 @@ class Main : AppCompatActivity() {
     private val LedService = retrofit.create(sendLedSeekBarValue::class.java)
     private val SoundService = retrofit.create(sendSoundSeekBarValue::class.java)
 
+    // DND part
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkAndstart()
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        // Turn off DND
         startProcess()
     }
 
@@ -81,8 +93,6 @@ class Main : AppCompatActivity() {
         val sharedPreference = getSharedPreferences("uuid", 0)
         val editor  : SharedPreferences.Editor = sharedPreference.edit()
 
-        // DND part
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
 
         selectedDate = LocalDate.now()
@@ -153,23 +163,6 @@ class Main : AppCompatActivity() {
             }
         })
 
-        // Turn on DND
-        fun onDND(){
-            if (checkNotificationPolicyAccess(notificationManager)){
-                notificationManager.onDOD()
-                toast("Do Not Disturb turned on.")
-                val intent = Intent(this@Main, Studymode::class.java)
-                startActivity(intent)
-            }
-        }
-
-        // Turn off DND
-        fun offDND(){
-            if (checkNotificationPolicyAccess(notificationManager)){
-                notificationManager.offDOD()
-                toast("Do Not Disturb turned off")
-            }
-        }
 
         // uuid 내부저장 일치 여부 확인.
         if (sharedPreference.getString("uuid", null) == "stacsad"){
@@ -212,7 +205,6 @@ class Main : AppCompatActivity() {
         //recycler view에 adapter와 layout manager 넣기
         findViewById<RecyclerView>(R.id.recyclerView).adapter = todayAdapter
         findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
-
     }
     // Version Check for Send sms and detect call
     private fun checkAndstart() {
@@ -275,6 +267,43 @@ class Main : AppCompatActivity() {
     }
     fun setList() {
         todoList.value = viewModel.getTodayList()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkIfHasNFCHardWare()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        nfcAdapter?.disableForegroundDispatch(this)
+        nfcAdapter?.disableReaderMode(this)
+    }
+    fun checkIfHasNFCHardWare() {
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+        pendingIntent = PendingIntent.getActivity(
+            this, 0, Intent(this, Main::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_MUTABLE
+        )
+        nfcAdapter?.enableForegroundDispatch(this, pendingIntent, null, null)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        resolveIntent(intent)
+    }
+
+    private fun resolveIntent(intent: Intent) {
+        val action = intent?.action
+        if(NfcAdapter.ACTION_TAG_DISCOVERED == action || NfcAdapter.ACTION_NDEF_DISCOVERED == action || NfcAdapter.ACTION_TECH_DISCOVERED == action) {
+            val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
+            val turnOnStudyMode = Intent(this, Studymode::class.java)
+            turnOnStudyMode.putExtra("nfcTag", tag)
+            startActivity(turnOnStudyMode)
+        }
+    }
+
+    override fun onTagDiscovered(tag: Tag?) {
     }
 
 }
