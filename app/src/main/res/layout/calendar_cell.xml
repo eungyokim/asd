@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="30dp"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
     <TextView
         android:id="@+id/calendar_cell_daytext"
@@ -10,4 +10,10 @@
         android:layout_gravity="center"
         android:text="1"
         android:theme="@style/Text3_light"/>
+    <View
+        android:id="@+id/calendar_cell_color"
+        android:layout_width="5dp"
+        android:layout_height="5dp"
+        android:layout_gravity="center"
+        android:background="@drawable/calendar_cell_color"/>
 </LinearLayout>

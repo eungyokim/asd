@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
@@ -212,6 +213,26 @@ class Main : AppCompatActivity() {
         //recycler view에 adapter와 layout manager 넣기
         findViewById<RecyclerView>(R.id.recyclerView).adapter = todayAdapter
         findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
+
+        findViewById<ConstraintLayout>(R.id.SampleLayoutView1).setOnTouchListener(object: OnSwipeTouchListener(this@Main) {
+            override fun onSwipeLeft() {
+                val intent = Intent(this@Main, setting::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.slide_right_enter,R.anim.slide_right_exit)
+                Log.e("fdafsdf", " dasfasdf")
+            }
+            override fun onSwipeRight() {
+                val intent = Intent(this@Main, Calendar::class.java)
+                    startActivity(intent)
+                overridePendingTransition(R.anim.slide_left_enter,R.anim.slide_left_exit)
+            }
+            override fun onSwipeTop() {
+                Toast.makeText(this@Main,"위로",Toast.LENGTH_SHORT).show()
+            }
+            override fun onSwipeBottom() {
+                Toast.makeText(this@Main,"아래로",Toast.LENGTH_SHORT).show()
+            }
+        })
 
     }
     // Version Check for Send sms and detect call

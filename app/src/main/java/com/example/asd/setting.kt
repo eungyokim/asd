@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.webkit.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import com.example.asd.getCode.get_Code
 import com.example.asd.SendUserInfo
@@ -150,6 +151,13 @@ class setting : AppCompatActivity() {
             showKakaoAddressWebView()
         }
         navigationBar()
+        findViewById<ConstraintLayout>(R.id.SampleLayoutView1).setOnTouchListener(object: OnSwipeTouchListener(this@setting) {
+            override fun onSwipeRight() {
+                val intent = Intent(this@setting, Main::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.slide_left_enter,R.anim.slide_left_exit)
+            }
+        })
     }
 
     private fun navigationBar() {

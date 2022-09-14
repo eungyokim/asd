@@ -31,9 +31,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".find_id"
-            android:exported="true"></activity>
-        <activity
             android:name=".Calendar"
             android:windowSoftInputMode="adjustPan"
             />

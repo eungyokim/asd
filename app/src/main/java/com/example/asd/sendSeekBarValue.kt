@@ -9,8 +9,8 @@ import retrofit2.http.POST
 // LED control
 interface sendLedSeekBarValue {
     @FormUrlEncoded
-    @Headers("SN:  64ba59ff-98dc-4f9d-a485-8e209b9957b6")
-    @POST("/sendLedValue")
+    @Headers("SN: 64ba59ff-98dc-4f9d-a485-8e209b9957b6")
+    @POST("/sendledvalue")
     fun SendLedValue(
         @Field("value") value: Int?,
         @Field("Hex") Hex : String?,
@@ -20,7 +20,7 @@ interface sendLedSeekBarValue {
 interface sendSoundSeekBarValue{
     @FormUrlEncoded
     @Headers("SN: 64ba59ff-98dc-4f9d-a485-8e209b9957b6")
-    @POST("/sendSoundValue")
+    @POST("/sendsoundvalue")
     fun SendSoundValue(
         @Field("value") value: Int?,
         @Field("Hex") Hex : String?,

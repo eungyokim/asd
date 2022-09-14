@@ -8,7 +8,9 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
@@ -63,6 +65,7 @@ class Calendar : AppCompatActivity() {
             findViewById<RecyclerView>(R.id.recyclerView).adapter = adapter
             findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
         })
+
 
         // calendar
         //binding 초기화
@@ -125,18 +128,48 @@ class Calendar : AppCompatActivity() {
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
         }
+        findViewById<ConstraintLayout>(R.id.SampleLayoutView1).setOnTouchListener(object: OnSwipeTouchListener(this@Calendar) {
+            override fun onSwipeLeft() {
+                val intent = Intent(this@Calendar, Main::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.slide_right_enter,R.anim.slide_right_exit)
+            }
+        })
     }
 
     //날짜 화면에 보여주기
     private fun setMonthView() {
-        //년월 텍스트 셋팅
+        viewModel = ViewModelProvider(this, ViewModelProviderFactory(this.application))
+            .get(TodoViewModel::class.java)
+
+        var yearMonth = YearMonth.from(selectedDate)
+        var lastDay = yearMonth.lengthOfMonth()
+
+        var _isIn = ArrayList<Boolean>()
+
+        //해당 월의 첫째 날
+        var firstDay = selectedDate.withDayOfMonth(1)
+
+        //첫 번째날 요일(월요일 : 1, 일요일 : 7)
+        var dayOfWeek = firstDay.dayOfWeek.value
+
+        for (i in 1..dayOfWeek){
+            _isIn.add(false)
+        }
+        for (i in 1..lastDay){
+            val list = viewModel.getSelectedList("${selectedDate.year}/${selectedDate.monthValue}/${i}")
+            if(list.toString() == "[]") _isIn.add(false)
+            else _isIn.add(true);
+        }
+
+            //년월 텍스트 셋팅
         binding.calendarCalendarYearnmonth.text = yearMonthFromDate(selectedDate)
 
         //날짜 생성해서 리스트에 담기
         val dayList = dayInMonthArray(selectedDate)
 
         //어댑터 초기화
-        val adapter = CalendarAdapter(dayList)
+        val adapter = CalendarAdapter(dayList, _isIn)
 
 
         //레이아웃 설정(열 7개)
