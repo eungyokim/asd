@@ -5,16 +5,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/True_black">
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id = "@+id/currentTimePart"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent="0.7"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.25">
         <TextView
-            android:id="@+id/currenTime"
+            android:id="@+id/currentTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="현재시각"
@@ -22,8 +22,11 @@
             android:textColor="@color/True_white"
             android:theme="@style/Text1_bold"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.2"
             app:layout_constraintLeft_toLeftOf="parent"/>
         <TextClock
+            android:id="@+id/clock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:format12Hour="hh:mm:ss"
@@ -33,27 +36,48 @@
             android:textColor="@color/True_white"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/currenTime"/>
+            app:layout_constraintTop_toBottomOf="@id/currentTime"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/alert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/True_white"
+        android:theme = "@style/Text1_bold"
+        android:gravity="center"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/currentTimePart" />
+    <TextView
+        android:id="@+id/fiveSecond"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:theme="@style/Text1_bold"
+        android:textSize="52sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/studyTimePart"/>
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/studyTimePart"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent="0.7"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.75">
         <TextView
-            android:id="@+id/StudyTime"
+            android:id="@+id/studyTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="공부시간"
             android:textSize="40sp"
             android:textColor="@color/True_white"
             android:theme="@style/Text1_bold"
+            app:layout_constraintHorizontal_bias="0.2"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <TextView
             android:id="@+id/record"
             android:layout_width="wrap_content"
@@ -62,7 +86,7 @@
             android:textSize="56sp"
             android:textColor="@color/True_white"
             android:theme="@style/Text1_bold"
-            app:layout_constraintTop_toBottomOf="@id/StudyTime"
+            app:layout_constraintTop_toBottomOf="@id/studyTime"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
