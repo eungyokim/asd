@@ -100,7 +100,7 @@ class Studymode : AppCompatActivity() {
                 Log.d("result",t.toString())
             }
         })
-                stopStudymode.stopStudymode().enqueue(object :
+        stopStudymode.stopStudymode().enqueue(object :
             Callback<Message> {
             override fun onResponse(
                 call: Call<Message>,
