@@ -52,14 +52,14 @@ class Studymode : AppCompatActivity() {
     var nfcTag: Tag? = null
     var nfcAdapter: NfcAdapter? = null
     var pendingIntent: PendingIntent? = null
-//    var gson= GsonBuilder().setLenient().create()
-//    private val retrofit = Retrofit.Builder()
-//        .baseUrl("https://asdapi.implude.kr/")
-//        .addConverterFactory(GsonConverterFactory.create(gson))
-//        .build()
-//
-//    private val startStudymode = retrofit.create(startStudymode::class.java)
-//    private val stopStudymode = retrofit.create(stopStudymode::class.java)
+    var gson= GsonBuilder().setLenient().create()
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://asdapi.implude.kr/")
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+
+    private val startStudymode = retrofit.create(startStudymode::class.java)
+    private val stopStudymode = retrofit.create(stopStudymode::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,28 +88,30 @@ class Studymode : AppCompatActivity() {
         onDND()
         studying()
 
-//        startStudymode.SendStudyTime().enqueue(object :
-//            Callback<Message> {
-//            override fun onResponse(
-//                call: Call<Message>,
-//                response: Response<Message>
-//            ) {
-//            }
-//            override fun onFailure(call: Call<Message>, t: Throwable) {
-//                Log.d("result",t.toString())
-//            }
-//        })
-        //        stopStudymode.SendStudyTime().enqueue(object :
-//            Callback<Message> {
-//            override fun onResponse(
-//                call: Call<Message>,
-//                response: Response<Message>
-//            ) {
-//            }
-//            override fun onFailure(call: Call<Message>, t: Throwable) {
-//                Log.d("result",t.toString())
-//            }
-//        })
+        startStudymode.startStudymode().enqueue(object :
+            Callback<Message> {
+            override fun onResponse(
+                call: Call<Message>,
+                response: Response<Message>
+            ) {
+                Log.e("fdasf", response.body().toString())
+            }
+            override fun onFailure(call: Call<Message>, t: Throwable) {
+                Log.d("result",t.toString())
+            }
+        })
+                stopStudymode.stopStudymode().enqueue(object :
+            Callback<Message> {
+            override fun onResponse(
+                call: Call<Message>,
+                response: Response<Message>
+            ) {
+                Log.e("fdasf", response.body().toString())
+            }
+            override fun onFailure(call: Call<Message>, t: Throwable) {
+                Log.d("result",t.toString())
+            }
+        })
     }
     /*화면 풀스크린 띄우기*/
     override fun onWindowFocusChanged(hasFocus: Boolean) {
