@@ -23,7 +23,7 @@ interface sendSoundSeekBarValue{
     @POST("/sendsoundvalue")
     fun SendSoundValue(
         @Field("value") value: Int?,
-        @Field("Hex") Hex : String?,
+        @Field("index") index: Int?,
         ):Call<getMsg>
 }
 

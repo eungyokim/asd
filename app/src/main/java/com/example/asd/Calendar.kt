@@ -22,6 +22,7 @@ import com.example.asd.todos.Todo
 import com.example.asd.todos.TodoViewModel
 import com.example.asd.todos.ViewModelProviderFactory
 import com.example.asd.databinding.CalendarBinding
+import org.w3c.dom.Text
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -48,6 +49,8 @@ class Calendar : AppCompatActivity() {
 
         // 달력의 날짜를 누르지 않고 'Todo'추가 시 오늘의 날짜로 입력이 된다.
         dayText = "${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}"
+
+
 
         // Todo List
         //뷰모델 받아오기
@@ -102,7 +105,7 @@ class Calendar : AppCompatActivity() {
 
 
 
-                val todo = Todo(findViewById<TextView>(R.id.recycleradd).text.toString(), time, year.toInt(), month.toInt(), date.toInt(), color.toString())
+                val todo = Todo(findViewById<TextView>(R.id.recycleradd).text.toString(), "${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}", year.toInt(), month.toInt(), date.toInt(), color.toString())
                 viewModel.insert(todo)
                 setList("${year}/${month}/${date}")
                 findViewById<TextView>(R.id.recycleradd).setText("")
@@ -111,6 +114,7 @@ class Calendar : AppCompatActivity() {
                 setList("${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}")
                 findViewById<TextView>(R.id.recycleradd).setText("")
             }
+            setMonthView()
         }
         findViewById<Button>(R.id.add_button).performClick()
 
@@ -137,10 +141,13 @@ class Calendar : AppCompatActivity() {
         })
     }
 
+
     //날짜 화면에 보여주기
     private fun setMonthView() {
         viewModel = ViewModelProvider(this, ViewModelProviderFactory(this.application))
             .get(TodoViewModel::class.java)
+
+        findViewById<TextView>(R.id.today).setText("${dayText.split('/')[0]}년 ${dayText.split('/')[1]}월 ${dayText.split('/')[2]}일")
 
         var yearMonth = YearMonth.from(selectedDate)
         var lastDay = yearMonth.lengthOfMonth()
@@ -160,6 +167,9 @@ class Calendar : AppCompatActivity() {
             val list = viewModel.getSelectedList("${selectedDate.year}/${selectedDate.monthValue}/${i}")
             if(list.toString() == "[]") _isIn.add(false)
             else _isIn.add(true);
+        }
+        for (i in _isIn.size..41){
+            _isIn.add(false)
         }
 
             //년월 텍스트 셋팅
@@ -190,6 +200,8 @@ class Calendar : AppCompatActivity() {
                 var date = dayList[position]
 
                 var clickDay: String = "${year}/${month}/${date}"
+
+                findViewById<TextView>(R.id.today).setText("${clickDay.split('/')[0]}년 ${clickDay.split('/')[1]}월 ${clickDay.split('/')[2]}일")
 
                 dayText = clickDay
 

@@ -112,28 +112,24 @@ class setting : AppCompatActivity() {
                         response.body()?.let {
                             it.schoolInfo?.forEach{ book->
                                 book!!.row?.forEach { it ->
-//
-                                    if (WhereSchool == it!!.oRGRDNZC.toString()){
-                                        Log.e("fdasd", "ㅋ")
-                                    }else{
-                                        Log.e("Fdasf","${WhereSchool} ${it!!.oRGRDNZC.toString()}")
-                                    }
-                                    // 사용자 정보 저장
-                                    service.SendUserInfo(name, age, gender, uuid, it?.sDSCHULCODE.toString()).enqueue(object :
-                                        Callback<getMsg> {
-                                        override fun onResponse(
-                                            call: Call<getMsg>,
-                                            response: Response<getMsg>
-                                        ) {
-                                            Log.e("fdaf", response.body().toString())
-                                        Toast.makeText(this@setting, "성공적으로 사용자 정보가 등록되었습니다.", Toast.LENGTH_SHORT).show()
-                                        editor.putString("uuid", it?.sDSCHULCODE.toString())
-                                        editor.commit()
-                                        }
-                                        override fun onFailure(call: Call<getMsg>, t: Throwable) {
-                                            Log.d("result",t.toString())
-                                        }
+                                    if (WhereSchool+' ' == it!!.oRGRDNZC.toString()){
+                                        // 사용자 정보 저장
+                                        service.SendUserInfo(name, age, gender, uuid, it!!.sDSCHULCODE.toString()).enqueue(object :
+                                            Callback<getMsg> {
+                                            override fun onResponse(
+                                                call: Call<getMsg>,
+                                                response: Response<getMsg>
+                                            ) {
+                                                Log.e("Fdasfsdaf", response.toString())
+                                                Toast.makeText(this@setting, "성공적으로 사용자 정보가 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                                                editor.putString("uuid", it?.sDSCHULCODE.toString())
+                                                editor.commit()
+                                            }
+                                            override fun onFailure(call: Call<getMsg>, t: Throwable) {
+                                                Log.d("result",t.toString())
+                                            }
                                     })
+                                    }
                                 }
 
                             }

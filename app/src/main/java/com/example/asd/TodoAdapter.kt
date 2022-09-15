@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.asd.todos.Todo
@@ -38,7 +39,18 @@ class TodoAdapter(val context: Context,
         holder.todoTime.apply {
             holder.itemView.findViewById<TextView>(R.id.todo_time).text = "${todo.date}"
             holder.itemView.findViewById<TextView>(R.id.todo_time).visibility = View.VISIBLE
-            holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundColor(todo.color!!.toInt())
+
+            if((position+1) % 5 == 1){
+                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv1)
+            }else if((position+1) % 5 == 2){
+                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv2)
+            }else if((position+1) % 5 == 3){
+                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv3)
+            }else if((position+1) % 5 == 4){
+                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv4)
+            }else if((position+1) % 5 == 5){
+                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv5)
+            }
         }
 
         //아이템 내의 x버튼을 누를 경우 삭제여부 확인.

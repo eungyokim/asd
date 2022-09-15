@@ -37,11 +37,9 @@ class CalendarAdapter(private val dayList: ArrayList<String>, private val value:
         val selectedDate = LocalDate.now()
         var yearMonth = YearMonth.from(selectedDate)
         var lastDay = yearMonth.lengthOfMonth()
-        Log.e("Fdas", value.toString())
-        if (position < lastDay) {
-            if (value[position].toString() == "true"){
-                holder.color.setBackgroundResource(R.drawable.calendar_cell_color_blue)
-            }
+        Log.e("Fdas", "${ value.size }, ${dayList.size}")
+        if (value[position].toString() == "true"){
+            holder.color.setBackgroundResource(R.drawable.calendar_cell_color_blue)
         }
         // 오늘 날짜, (**/**)의 형식
         // ex) '8/21'
@@ -51,18 +49,6 @@ class CalendarAdapter(private val dayList: ArrayList<String>, private val value:
         // 제대로 클릭을 했는지 확인함.
         holder.itemView.setOnClickListener {
             itemClickListner.onClick(it, position)
-            holder.itemView.setBackgroundResource(R.color.button_blue)
-            holder.dayText.setTextColor(Color.WHITE)
-            if(value[position].toString() == "false"){
-                holder.color.setBackgroundResource(R.drawable.calendar_cell_color_blue)
-            }
-            Handler().postDelayed({
-                holder.itemView.setBackgroundResource(R.color.True_white)
-                holder.dayText.setTextColor(Color.BLACK)
-                if(value[position].toString() == "false"){
-                    holder.color.setBackgroundResource(R.drawable.calendar_cell_color)
-                }
-            }, 50)
         }
     }
 

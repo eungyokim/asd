@@ -47,6 +47,7 @@
         <activity
             android:name=".Calendar"
             android:windowSoftInputMode="adjustPan"
+            android:clipToOutline="true"
             />
         <activity
             android:name=".setting"

@@ -22,9 +22,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/todo_color"
         app:layout_constraintRight_toLeftOf="@id/todo_delete"
-        android:paddingLeft="20dp"
-        >
-
+        android:paddingLeft="20dp">
         <TextView
             android:id="@+id/todo_text"
             android:layout_width="0dp"

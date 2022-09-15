@@ -1,9 +1,11 @@
 package com.example.asd
 
 import android.Manifest
+import android.app.AlertDialog
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -58,6 +60,7 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
         Manifest.permission.SEND_SMS,
         Manifest.permission.WRITE_CONTACTS,
         Manifest.permission.READ_CONTACTS,
+        Manifest.permission.NFC
     )
 
     //년월 변수
@@ -93,6 +96,8 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
         setContentView(R.layout.main)
         val sharedPreference = getSharedPreferences("uuid", 0)
         val editor  : SharedPreferences.Editor = sharedPreference.edit()
+        var checkedItemPosition = 0
+        val array = arrayOf("장작타는소리", "빗소리", "카페소리(웅성웅성)")
 
 
 
@@ -115,6 +120,22 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
                 .show()
         }
 
+        findViewById<ImageButton>(R.id.Sound).setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("백색소음 선택하기")
+                .setSingleChoiceItems(array, checkedItemPosition, object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface, which: Int) {
+                        Log.d("MyTag", "which : $which")
+                        checkedItemPosition = which
+                    }
+                })
+                .setPositiveButton("선택하기", object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        Log.d("MyTag", "checkedItemPosition : $checkedItemPosition")
+                    }
+                })
+                .show()
+        }
 
 
         // LED 밝기 제어
@@ -150,12 +171,13 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                SoundService.SendSoundValue(findViewById<SeekBar>(R.id.LedSeekBar).progress, selectedColor).enqueue(object :
+                SoundService.SendSoundValue(findViewById<SeekBar>(R.id.LedSeekBar).progress,checkedItemPosition).enqueue(object :
                     Callback<getMsg> {
                     override fun onResponse(
                         call: Call<getMsg>,
                         response: Response<getMsg>
                     ) {
+                        Log.e("Fdasfsdaf", response.body().toString())
                     }
                     override fun onFailure(call: Call<getMsg>, t: Throwable) {
                         Log.d("result",t.toString())
@@ -218,12 +240,6 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
                 val intent = Intent(this@Main, Calendar::class.java)
                     startActivity(intent)
                 overridePendingTransition(R.anim.slide_left_enter,R.anim.slide_left_exit)
-            }
-            override fun onSwipeTop() {
-                Toast.makeText(this@Main,"위로",Toast.LENGTH_SHORT).show()
-            }
-            override fun onSwipeBottom() {
-                Toast.makeText(this@Main,"아래로",Toast.LENGTH_SHORT).show()
             }
         })
 

@@ -7,7 +7,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 data class Message(
-    val msg: String,
+    val message: String,
 )
 
 interface startStudymode {

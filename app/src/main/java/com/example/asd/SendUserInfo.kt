@@ -5,7 +5,7 @@ import retrofit2.Call
 import retrofit2.http.*
 
 data class getMsg(
-    val msg: String? = null
+    val message: String? = null
 )
 
 interface SendUserInfo {
@@ -17,7 +17,7 @@ interface SendUserInfo {
         @Field("age") age: String?,
         @Field("gender") gender: String?,
         @Field("uuid") uuid: String?,
-        @Field("school") school: String,
+        @Field("school") school: String?,
     ): Call<getMsg>
 
 }
