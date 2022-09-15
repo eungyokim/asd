@@ -124,6 +124,9 @@ class setting : AppCompatActivity() {
                                                 Toast.makeText(this@setting, "성공적으로 사용자 정보가 등록되었습니다.", Toast.LENGTH_SHORT).show()
                                                 editor.putString("uuid", it?.sDSCHULCODE.toString())
                                                 editor.commit()
+                                                val intent = Intent(this@setting, Main::class.java)
+                                                startActivity(intent)
+                                                overridePendingTransition(R.anim.slide_left_enter,R.anim.slide_left_exit)
                                             }
                                             override fun onFailure(call: Call<getMsg>, t: Throwable) {
                                                 Log.d("result",t.toString())
