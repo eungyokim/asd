@@ -100,7 +100,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/setting_userinfo_gender_male"
                 app:layout_constraintBottom_toTopOf="@id/setting_userinfo_school"
-                android:hint="스피커 고유번호(원래 긴 것이 정상입니다.)"/>
+                android:hint="스피커 고유번호"/>
             <EditText
                 android:id="@+id/setting_userinfo_school"
                 android:layout_width="0dp"

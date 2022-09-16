@@ -100,18 +100,6 @@ class Studymode : AppCompatActivity() {
                 Log.d("result",t.toString())
             }
         })
-        stopStudymode.stopStudymode().enqueue(object :
-            Callback<Message> {
-            override fun onResponse(
-                call: Call<Message>,
-                response: Response<Message>
-            ) {
-                Log.e("fdasf", response.body().toString())
-            }
-            override fun onFailure(call: Call<Message>, t: Throwable) {
-                Log.d("result",t.toString())
-            }
-        })
     }
     /*화면 풀스크린 띄우기*/
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -172,6 +160,18 @@ class Studymode : AppCompatActivity() {
                         fiveCount += 1
                     }
                     else if(fiveCount >= 15) {
+                        stopStudymode.stopStudymode().enqueue(object :
+                            Callback<Message> {
+                            override fun onResponse(
+                                call: Call<Message>,
+                                response: Response<Message>
+                            ) {
+                                Log.e("fdasf", response.body().toString())
+                            }
+                            override fun onFailure(call: Call<Message>, t: Throwable) {
+                                Log.d("result",t.toString())
+                            }
+                        })
                         cancel()
                         finish()
                         offDND()
