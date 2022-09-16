@@ -3,6 +3,7 @@ package com.example.asd
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,7 @@ import java.util.*
 class TodoAdapter(val context: Context,
                   var itemList: MutableList<Todo>,
                   val viewModel: TodoViewModel,
-//                val setList: (data:String) -> Unit
+                  val mixFunction: () -> Unit
 ) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoAdapter.TodoViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -31,7 +32,7 @@ class TodoAdapter(val context: Context,
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         // position에 해당하는 Todo객체를 얻음
-        val todo = itemList[position];
+        val todo = itemList[getItemCount() - 1 - position];
 
         holder.itemView.findViewById<TextView>(R.id.todo_text).text = todo.text
 
@@ -40,15 +41,15 @@ class TodoAdapter(val context: Context,
             holder.itemView.findViewById<TextView>(R.id.todo_time).text = "${todo.date}"
             holder.itemView.findViewById<TextView>(R.id.todo_time).visibility = View.VISIBLE
 
-            if((position+1) % 5 == 1){
+            if(todo.index!!.toInt() % 5 == 0){
                 holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv1)
-            }else if((position+1) % 5 == 2){
+            }else if(todo.index!!.toInt() % 5 == 1){
                 holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv2)
-            }else if((position+1) % 5 == 3){
+            }else if(todo.index!!.toInt() % 5 == 2){
                 holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv3)
-            }else if((position+1) % 5 == 4){
+            }else if(todo.index!!.toInt() % 5 == 3){
                 holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv4)
-            }else if((position+1) % 5 == 5){
+            }else if(todo.index!!.toInt() % 5 == 4){
                 holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv5)
             }
         }
@@ -60,6 +61,7 @@ class TodoAdapter(val context: Context,
                 .setPositiveButton("삭제") {str, dialogInterface ->
                     val todo = itemList[position]
                     viewModel.delete(todo)
+                    mixFunction()
                 }
                 .setNegativeButton("취소",null)
             alertDialog.show()
@@ -75,5 +77,6 @@ class TodoAdapter(val context: Context,
         val todoTime = itemView.findViewById<TextView>(R.id.todo_time)
         val todoDelete = itemView.findViewById<ImageView>(R.id.todo_delete)
     }
+
 
 }

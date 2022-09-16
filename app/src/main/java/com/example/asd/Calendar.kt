@@ -62,7 +62,7 @@ class Calendar : AppCompatActivity() {
             Log.d("date",it.toString());
             val list = viewModel.getSelectedList(it.toString())
 
-            adapter = TodoAdapter(this, list, viewModel);
+            adapter = TodoAdapter(this, list, viewModel, ::mixFunction);
             Log.d("date",list.toString());
 
             findViewById<RecyclerView>(R.id.recyclerView).adapter = adapter
@@ -98,20 +98,19 @@ class Calendar : AppCompatActivity() {
                 val rnd = Random()
                 val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
 
+
                 var year = dayText.split("/")[0]
                 var month = dayText.split("/")[1]
                 var date = dayText.split("/")[2]
-                var time = "${year}-${month}-${date}"
 
-
-
-                val todo = Todo(findViewById<TextView>(R.id.recycleradd).text.toString(), "${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}", year.toInt(), month.toInt(), date.toInt(), color.toString())
+                val todo = Todo(findViewById<TextView>(R.id.recycleradd).text.toString(), "${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}", year.toInt(), month.toInt(), date.toInt(), color.toString(), viewModel.getSelectedList("$year/$month/$date").size.toString())
                 viewModel.insert(todo)
-                setList("${year}/${month}/${date}")
+                setList()
                 findViewById<TextView>(R.id.recycleradd).setText("")
             }
             else {
-                setList("${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}")
+                dayText = "${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}"
+                setList()
                 findViewById<TextView>(R.id.recycleradd).setText("")
             }
             setMonthView()
@@ -250,10 +249,14 @@ class Calendar : AppCompatActivity() {
 
     // 화면을 다시 돌리기 위해 viewModel 내에 있는 LiveData의 value를 변경시켜줌.
     // value가 변경됨에 따라 observer에 설정된 함수가 실행되고 UI가 변경됨.
-    fun setList(data:String) {
-        val list = viewModel.getSelectedList(data)
-        adapter = TodoAdapter(this, list, viewModel);
+    fun setList() {
+        val list = viewModel.getSelectedList("${dayText.split("/")[0]}/${dayText.split("/")[1]}/${dayText.split("/")[2]}")
+        adapter = TodoAdapter(this, list, viewModel, ::mixFunction);
         findViewById<RecyclerView>(R.id.recyclerView).adapter = adapter
         findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
+    }
+    fun mixFunction(){
+        setList()
+        setMonthView()
     }
 }

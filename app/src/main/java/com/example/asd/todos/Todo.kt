@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import java.io.Serializable
 
 @Entity
-data class Todo(var text: String?,var today: String?, var tyear: Int?, var tmonth: Int?,var tdate: Int?,var thisColor: String?, var isDone: Boolean = false) : Serializable {
+data class Todo(var text: String?,var today: String?, var tyear: Int?, var tmonth: Int?,var tdate: Int?,var thisColor: String?, var tindex: String?, var isDone: Boolean = false) : Serializable {
     // 등록하는 순간 System의 시간을 받으므로 등록일 순 정렬에 사용할 기준이 됨.
     @PrimaryKey
     var registerTime : Long = System.currentTimeMillis()
@@ -30,4 +30,7 @@ data class Todo(var text: String?,var today: String?, var tyear: Int?, var tmont
     var day: Int? = tdate
     @ColumnInfo
     var color: String? = thisColor
+
+    @ColumnInfo
+    var index: String? = tindex
 }

@@ -15,7 +15,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintWidth_percent="0.9"
-            app:layout_constraintHeight_percent="0.43"
+            app:layout_constraintHeight_percent="0.38"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -141,7 +141,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintWidth_percent="0.9"
-            app:layout_constraintHeight_percent="0.26"
+            app:layout_constraintHeight_percent="0.38"
             android:background="@drawable/calendar_calendar"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -165,35 +165,47 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/today"
-                app:layout_constraintBottom_toTopOf="@id/recycleradd"
+                app:layout_constraintBottom_toTopOf="@id/addBox"
                 app:layout_constraintWidth_percent="0.9"
                 app:layout_constraintHeight_percent="0.6" />
 
-            <EditText
-                android:id="@+id/recycleradd"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/addBox"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:hint="입력하기"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/add_button"
-                app:layout_constraintTop_toBottomOf="@+id/recyclerView"
-                app:layout_constraintWidth_percent="0.6" />
-            <Button
-                android:id="@+id/add_button"
-                android:layout_width="0dp"
-                app:layout_constraintWidth_percent="0.3"
-                android:layout_height="wrap_content"
-                android:theme="@style/Text4_semibold"
-                android:textColor="@color/True_white"
-                android:background="@drawable/add_button"
-                android:text="추가하기"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_percent="0.18"
+                app:layout_constraintWidth_percent="0.9"
                 app:layout_constraintTop_toBottomOf="@id/recyclerView"
-                app:layout_constraintLeft_toRightOf="@id/recycleradd"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+                <EditText
+                    android:id="@+id/recycleradd"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintHeight_percent="0.8"
+                    android:padding="10dp"
+                    android:hint="입력하기"
+                    android:theme="@style/Text4_semibold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:background="@drawable/input_todo"
+                    app:layout_constraintWidth_percent="0.65"/>
+                <Button
+                    android:id="@+id/add_button"
+                    android:layout_width="0dp"
+                    app:layout_constraintWidth_percent="0.3"
+                    android:layout_height="0dp"
+                    app:layout_constraintHeight_percent="0.8"
+                    android:theme="@style/Text5_semibold"
+                    android:textColor="@color/True_white"
+                    android:background="@drawable/add_button"
+                    android:text="추가하기"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -206,7 +218,7 @@
             app:layout_constraintHeight_percent="0.09"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:elevation="4dp"
+            android:elevation="2dp"
             android:background="@drawable/navigation_bar"
             android:layout_marginBottom="15dp"
             app:layout_constraintBottom_toBottomOf="parent">

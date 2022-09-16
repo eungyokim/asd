@@ -37,7 +37,6 @@ class CalendarAdapter(private val dayList: ArrayList<String>, private val value:
         val selectedDate = LocalDate.now()
         var yearMonth = YearMonth.from(selectedDate)
         var lastDay = yearMonth.lengthOfMonth()
-        Log.e("Fdas", "${ value.size }, ${dayList.size}")
         if (value[position].toString() == "true"){
             holder.color.setBackgroundResource(R.drawable.calendar_cell_color_blue)
         }

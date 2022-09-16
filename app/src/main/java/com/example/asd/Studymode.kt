@@ -82,7 +82,7 @@ class Studymode : AppCompatActivity() {
         fiveSecond = findViewById(R.id.fiveSecond)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
-        pendingIntent = PendingIntent.getActivity(this, 0, Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+        pendingIntent = PendingIntent.getActivity(this, 0, Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_MUTABLE)
         val intent: Intent = getIntent()
         nfcTag = intent.getParcelableExtra("nfcTag")
         onDND()

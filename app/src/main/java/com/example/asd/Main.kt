@@ -39,6 +39,7 @@ import com.example.asd.todos.Todo
 import com.example.asd.todos.TodoViewModel
 import com.example.asd.todos.ViewModelProviderFactory
 import com.github.dhaval2404.colorpicker.ColorPickerDialog
+import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog
 import com.github.dhaval2404.colorpicker.model.ColorShape
 import com.google.gson.GsonBuilder
 import retrofit2.Call
@@ -109,11 +110,10 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
             ColorPickerDialog
                 .Builder(this)        				// Pass Activity Instance
                 .setTitle("Pick LED Color")
-                .setDefaultColor(R.color.True_black)
                 .setNegativeButton("뒤로가기")
                 .setPositiveButton("선택")// Default "Choose Color"
                 .setColorShape(ColorShape.CIRCLE)   // Default ColorShape.CIRCLE
-                .setDefaultColor(R.color.True_white)     // Pass Default Color
+                .setDefaultColor(R.color.True_white)    // Pass Default Color
                 .setColorListener { color, colorHex ->
                     selectedColor = colorHex
                     findViewById<ImageButton>(R.id.bulb).backgroundTintList = ColorStateList.valueOf(color)
@@ -235,7 +235,6 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
                 val intent = Intent(this@Main, setting::class.java)
                 startActivity(intent)
                 overridePendingTransition(R.anim.slide_right_enter,R.anim.slide_right_exit)
-                Log.e("fdafsdf", " dasfasdf")
             }
             override fun onSwipeRight() {
                 val intent = Intent(this@Main, Calendar::class.java)

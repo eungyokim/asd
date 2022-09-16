@@ -195,7 +195,7 @@ class setting : AppCompatActivity() {
             addJavascriptInterface(WebViewData(), "asd")
             webViewClient = client
             webChromeClient = chromeClient
-            loadUrl("https://june-admission.herokuapp.com/")
+            loadUrl("https://eks05.github.io/")
         }
     }
 

@@ -29,7 +29,7 @@ class TodayAdapter(val context: Context,
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         // position에 해당하는 Todo객체를 얻음
-        val todo = itemList[position];
+        val todo = itemList[getItemCount() - 1 - position];
 
         holder.itemView.findViewById<TextView>(R.id.todo_text).text = todo.text
 
@@ -37,15 +37,16 @@ class TodayAdapter(val context: Context,
         holder.todoTime.apply {
             holder.itemView.findViewById<TextView>(R.id.todo_time).text = "${todo.date}"
             holder.itemView.findViewById<TextView>(R.id.todo_time).visibility = View.VISIBLE
-            if((position) % 5 == 0){
+
+            if(todo.index!!.toInt() % 5 == 0){
                 holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv1)
-            }else if((position) % 5 == 1){
+            }else if(todo.index!!.toInt() % 5 == 1){
                 holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv2)
-            }else if((position) % 5 == 2){
+            }else if(todo.index!!.toInt() % 5 == 2){
                 holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv3)
-            }else if((position) % 5 == 3){
+            }else if(todo.index!!.toInt() % 5 == 3){
                 holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv4)
-            }else if((position) % 5 == 4){
+            }else if(todo.index!!.toInt() % 5 == 4){
                 holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv5)
             }
         }
@@ -69,8 +70,6 @@ class TodayAdapter(val context: Context,
     }
 
     inner class TodoViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
-        val todoInfo = itemView.findViewById<ConstraintLayout>(R.id.todo_info)
-        val todoText = itemView.findViewById<TextView>(R.id.todo_text)
         val todoTime = itemView.findViewById<TextView>(R.id.todo_time)
         val todoDelete = itemView.findViewById<ImageView>(R.id.todo_delete)
     }
