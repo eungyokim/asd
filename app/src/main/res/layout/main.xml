@@ -24,6 +24,16 @@
             android:theme="@style/Text4_semibold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:src="@drawable/question_mark"
+            android:background="@color/Background"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/main_management_list"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_management_list"
             android:layout_width="match_parent"
