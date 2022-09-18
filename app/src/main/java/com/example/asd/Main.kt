@@ -10,16 +10,16 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.Color.parseColor
+import android.net.Uri
 import android.nfc.NfcAdapter
 import android.nfc.Tag
-import android.nfc.tech.NfcA
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.View
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
@@ -28,8 +28,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -39,7 +37,6 @@ import com.example.asd.todos.Todo
 import com.example.asd.todos.TodoViewModel
 import com.example.asd.todos.ViewModelProviderFactory
 import com.github.dhaval2404.colorpicker.ColorPickerDialog
-import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog
 import com.github.dhaval2404.colorpicker.model.ColorShape
 import com.google.gson.GsonBuilder
 import retrofit2.Call
@@ -62,8 +59,10 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
         Manifest.permission.SEND_SMS,
         Manifest.permission.WRITE_CONTACTS,
         Manifest.permission.READ_CONTACTS,
-        Manifest.permission.NFC
-    )
+        Manifest.permission.NFC,
+        Manifest.permission.CALL_PHONE,
+        Manifest.permission.READ_PHONE_STATE,
+        )
 
     //년월 변수
     lateinit var selectedDate: LocalDate
@@ -96,20 +95,39 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
 
     private fun startProcess() {
         setContentView(R.layout.main)
+
+        val nfcAdapter : NfcAdapter = NfcAdapter.getDefaultAdapter(applicationContext)
+        val isNfcOn : Boolean = nfcAdapter.isEnabled()
+
+        if( isNfcOn == false){
+            Toast.makeText(application, "공부모드를 시작하려면 NFC를 켜주세요.", Toast.LENGTH_SHORT).show()
+        }
+        checkNotificationPolicyAccess(getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
+
         val sharedPreference = getSharedPreferences("uuid", 0)
         val editor  : SharedPreferences.Editor = sharedPreference.edit()
         var checkedItemPosition = 0
         val array = arrayOf("장작타는소리", "빗소리", "카페소리(웅성웅성)")
+        val asdHelpArray = arrayOf("LED", "스피커", "공부모드")
 
+        val builder = AlertDialog.Builder(this)
 
 
         selectedDate = LocalDate.now()
         findViewById<TextView>(R.id.main_todolist_dash_middle).text = yearMonthFromDate(selectedDate)
 
+        findViewById<ImageButton>(R.id.main_help).setOnClickListener{
+            val url = "https://eks0220.notion.site/eks0220/ASD-30f28bfa8e1d4cada4b30090c6fbbe08"
+
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+
+        }
+
         findViewById<ImageButton>(R.id.bulb).setOnClickListener {
             ColorPickerDialog
                 .Builder(this)        				// Pass Activity Instance
-                .setTitle("Pick LED Color")
+                .setTitle("LED 색깔 선택")
                 .setNegativeButton("뒤로가기")
                 .setPositiveButton("선택")// Default "Choose Color"
                 .setColorShape(ColorShape.CIRCLE)   // Default ColorShape.CIRCLE
@@ -238,10 +256,12 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
             }
             override fun onSwipeRight() {
                 val intent = Intent(this@Main, Calendar::class.java)
-                    startActivity(intent)
+                startActivity(intent)
                 overridePendingTransition(R.anim.slide_left_enter,R.anim.slide_left_exit)
             }
         })
+
+
 
     }
     // Version Check for Send sms and detect call
@@ -272,10 +292,8 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
     private fun checkNotificationPolicyAccess(notificationManager:NotificationManager):Boolean{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (notificationManager.isNotificationPolicyAccessGranted){
-                //toast("Notification policy access granted.")
                 return true
             }else{
-                toast("You need to grant notification policy access.")
                 // If notification policy access not granted for this package
                 val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
                 startActivity(intent)
@@ -353,4 +371,3 @@ private fun yearMonthFromDate(date: LocalDate): String{
     //받아온 날짜를 해당 포맷으로 변경
     return date.format(formatter)
 }
-

@@ -140,6 +140,7 @@ class Studymode : AppCompatActivity() {
         var backUpMin = 0
         var backUpHour = 0
         timerTask = kotlin.concurrent.timer(period = 1000) {
+            Log.e("nfctag", "$nfcTag")
             time++
             var sec = time % 60
             var min = time % 3600 /60
@@ -191,7 +192,7 @@ class Studymode : AppCompatActivity() {
                     studyTimeText.setTextColor(Color.BLACK)
                     studyRecord.setTextColor(Color.BLACK)
                     alert.setTextColor(Color.WHITE)
-                    alert.text = "공부시간을 이어가려면 15초 이내로 스피커에 폰을 다시 올려주세요."
+                    alert.text = "공부시간을 이어가려면 15초 이내로\n스피커에 폰을 다시 올려주세요."
                     fiveSecond.setTextColor(Color.RED)
                     fiveSecond.text = "${16 - fiveCount}"
                 }
@@ -219,7 +220,7 @@ class Studymode : AppCompatActivity() {
     fun detectDetached(): Boolean{
         val result = nfcAdapter?.ignore(
             nfcTag,
-            1000,
+            0,
             NfcAdapter.OnTagRemovedListener  {},
             Handler())
         if (result == null) {
@@ -270,4 +271,3 @@ class Studymode : AppCompatActivity() {
 //        super.onBackPressed()
     }
 }
-
