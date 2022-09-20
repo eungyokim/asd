@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.net.Uri
 import android.nfc.NfcAdapter
 import android.nfc.Tag
@@ -17,6 +18,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -28,6 +30,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -59,7 +62,6 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
         Manifest.permission.SEND_SMS,
         Manifest.permission.WRITE_CONTACTS,
         Manifest.permission.READ_CONTACTS,
-        Manifest.permission.NFC,
         Manifest.permission.CALL_PHONE,
         Manifest.permission.READ_PHONE_STATE,
         )
@@ -70,9 +72,6 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
     private var nfcAdapter: NfcAdapter? = null
     private lateinit var pendingIntent: PendingIntent
 
-    var selectedColor: String? = "#ffffff"
-
-
     // 자체 백엔드 서버 연동
     var gson= GsonBuilder().setLenient().create()
     private val retrofit = Retrofit.Builder()
@@ -82,9 +81,10 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
 
     private val LedService = retrofit.create(sendLedSeekBarValue::class.java)
     private val SoundService = retrofit.create(sendSoundSeekBarValue::class.java)
+    private val LedHex = retrofit.create(sendLedHex::class.java)
+    private val WhiteNoiseIndex = retrofit.create(sendSoundIndex::class.java)
 
     // DND part
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkAndstart()
@@ -95,7 +95,6 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
 
     private fun startProcess() {
         setContentView(R.layout.main)
-
         val nfcAdapter : NfcAdapter = NfcAdapter.getDefaultAdapter(applicationContext)
         val isNfcOn : Boolean = nfcAdapter.isEnabled()
 
@@ -104,13 +103,15 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
         }
         checkNotificationPolicyAccess(getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
 
-        val sharedPreference = getSharedPreferences("uuid", 0)
+        val sharedPreference = getSharedPreferences("test", 0)
         val editor  : SharedPreferences.Editor = sharedPreference.edit()
-        var checkedItemPosition = 0
-        val array = arrayOf("장작타는소리", "빗소리", "카페소리(웅성웅성)")
-        val asdHelpArray = arrayOf("LED", "스피커", "공부모드")
 
-        val builder = AlertDialog.Builder(this)
+
+        findViewById<SeekBar>(R.id.SoundSeekBar).setProgress(sharedPreference.getInt("white_noise", 0))
+        findViewById<SeekBar>(R.id.LedSeekBar).setProgress(sharedPreference.getInt("LED", 0))
+
+        var checkedItemPosition = sharedPreference.getInt("white_noise_index", 0)
+        val array = arrayOf("장작타는소리", "빗소리", "도서관소리")
 
 
         selectedDate = LocalDate.now()
@@ -121,7 +122,6 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
 
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
-
         }
 
         findViewById<ImageButton>(R.id.bulb).setOnClickListener {
@@ -133,8 +133,22 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
                 .setColorShape(ColorShape.CIRCLE)   // Default ColorShape.CIRCLE
                 .setDefaultColor(R.color.True_white)    // Pass Default Color
                 .setColorListener { color, colorHex ->
-                    selectedColor = colorHex
-                    findViewById<ImageButton>(R.id.bulb).backgroundTintList = ColorStateList.valueOf(color)
+                    LedHex.SendLedHex(getSharedPreferences("uuid", 0).getString("uuid", "").toString(),colorHex).enqueue(object :
+                        Callback<getMsg> {
+                        override fun onResponse(
+                            call: Call<getMsg>,
+                            response: Response<getMsg>
+                        ) {
+                            editor.putInt("LED_color", color)
+                            editor.putString("LED_Hex", colorHex)
+                            editor.commit()
+                            findViewById<ImageButton>(R.id.bulb).backgroundTintList = ColorStateList.valueOf(sharedPreference.getInt("LED_color", 0))
+                            Log.e("Fdasfsdaf", response.body().toString())
+                        }
+                        override fun onFailure(call: Call<getMsg>, t: Throwable) {
+                            Log.d("result",t.toString())
+                        }
+                    })
                 }
                 .show()
         }
@@ -151,6 +165,18 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
                 .setPositiveButton("선택하기", object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
                         Log.d("MyTag", "checkedItemPosition : $checkedItemPosition")
+                        WhiteNoiseIndex.SendSoundIndex(getSharedPreferences("uuid", 0).getString("uuid", "").toString(), checkedItemPosition).enqueue(object :
+                            Callback<getMsg> {
+                            override fun onResponse(
+                                call: Call<getMsg>,
+                                response: Response<getMsg>
+                            ) {
+                                editor.putInt("white_noise_index", checkedItemPosition)
+                                editor.commit()
+                            }
+                            override fun onFailure(call: Call<getMsg>, t: Throwable) {
+                            }
+                        })
                     }
                 })
                 .show()
@@ -166,12 +192,14 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                LedService.SendLedValue(findViewById<SeekBar>(R.id.LedSeekBar).progress, selectedColor).enqueue(object :
+                LedService.SendLedValue(getSharedPreferences("uuid", 0).getString("uuid", "").toString(), findViewById<SeekBar>(R.id.LedSeekBar).progress).enqueue(object :
                     Callback<getMsg> {
                     override fun onResponse(
                         call: Call<getMsg>,
                         response: Response<getMsg>
                     ) {
+                        editor.putInt("LED", findViewById<SeekBar>(R.id.LedSeekBar).progress)
+                        editor.commit()
                         Log.e("Fdasfsdaf", response.body().toString())
                     }
                     override fun onFailure(call: Call<getMsg>, t: Throwable) {
@@ -190,13 +218,15 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                SoundService.SendSoundValue(findViewById<SeekBar>(R.id.LedSeekBar).progress,checkedItemPosition).enqueue(object :
+                SoundService.SendSoundValue(getSharedPreferences("uuid", 0).getString("uuid", "").toString(), findViewById<SeekBar>(R.id.LedSeekBar).progress).enqueue(object :
                     Callback<getMsg> {
                     override fun onResponse(
                         call: Call<getMsg>,
                         response: Response<getMsg>
                     ) {
                         Log.e("Fdasfsdaf", response.body().toString())
+                        editor.putInt("white_noise", findViewById<SeekBar>(R.id.SoundSeekBar).progress)
+                        editor.commit()
                     }
                     override fun onFailure(call: Call<getMsg>, t: Throwable) {
                         Log.d("result",t.toString())
@@ -207,10 +237,15 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
 
 
         // uuid 내부저장 일치 여부 확인.
-        if (sharedPreference.getString("uuid", null) == "stacsad"){
+        if (getSharedPreferences("uuid", 0).getString("uuid", "") == ""){
             val intent = Intent(this@Main, setting::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
+            if(sharedPreference.getInt("LED_color", 0) == -16711916){
+                findViewById<ImageButton>(R.id.bulb).backgroundTintList = ColorStateList.valueOf(1869288)
+            }
+        }else{
+            findViewById<ImageButton>(R.id.bulb).backgroundTintList = ColorStateList.valueOf(sharedPreference.getInt("LED_color", 1869288))
         }
 
         // Navigation bar control

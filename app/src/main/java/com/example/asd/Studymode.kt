@@ -73,6 +73,7 @@ class Studymode : AppCompatActivity() {
                 toast("Do Not Disturb turned on.")
             }
         }
+        val sharedPreference = getSharedPreferences("test", 0)
 
         currntTime = findViewById(R.id.currentTime)
         clockText = findViewById(R.id.clock)
@@ -88,7 +89,7 @@ class Studymode : AppCompatActivity() {
         onDND()
         studying()
 
-        startStudymode.startStudymode().enqueue(object :
+        startStudymode.startStudymode(getSharedPreferences("uuid", 0).getString("uuid", "").toString()).enqueue(object :
             Callback<Message> {
             override fun onResponse(
                 call: Call<Message>,
@@ -123,6 +124,7 @@ class Studymode : AppCompatActivity() {
     }
 
     private fun studying() {
+        val sharedPreference = getSharedPreferences("test", 0)
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         fun offDND(){
             if (checkNotificationPolicyAccess(notificationManager)){
@@ -161,7 +163,7 @@ class Studymode : AppCompatActivity() {
                         fiveCount += 1
                     }
                     else if(fiveCount >= 15) {
-                        stopStudymode.stopStudymode().enqueue(object :
+                        stopStudymode.stopStudymode(getSharedPreferences("uuid", 0).getString("uuid", "").toString()).enqueue(object :
                             Callback<Message> {
                             override fun onResponse(
                                 call: Call<Message>,

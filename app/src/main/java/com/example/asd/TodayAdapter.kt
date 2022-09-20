@@ -38,17 +38,17 @@ class TodayAdapter(val context: Context,
             holder.itemView.findViewById<TextView>(R.id.todo_time).text = "${todo.date}"
             holder.itemView.findViewById<TextView>(R.id.todo_time).visibility = View.VISIBLE
 
-            if(todo.index!!.toInt() % 5 == 0){
+//            if(todo.index!!.toInt() % 5 == 0){
                 holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv1)
-            }else if(todo.index!!.toInt() % 5 == 1){
-                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv2)
-            }else if(todo.index!!.toInt() % 5 == 2){
-                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv3)
-            }else if(todo.index!!.toInt() % 5 == 3){
-                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv4)
-            }else if(todo.index!!.toInt() % 5 == 4){
-                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv5)
-            }
+//            }else if(todo.index!!.toInt() % 5 == 1){
+//                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv2)
+//            }else if(todo.index!!.toInt() % 5 == 2){
+//                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv3)
+//            }else if(todo.index!!.toInt() % 5 == 3){
+//                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv4)
+//            }else if(todo.index!!.toInt() % 5 == 4){
+//                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv5)
+//            }
         }
 
         //아이템 내의 x버튼을 누를 경우 삭제여부 확인.
@@ -56,7 +56,7 @@ class TodayAdapter(val context: Context,
             val alertDialog = AlertDialog.Builder(context)
                 .setMessage("정말 삭제하시겠습니까?")
                 .setPositiveButton("삭제") {str, dialogInterface ->
-                    val todo = itemList[position]
+                    val todo = itemList[getItemCount() - 1 - position]
                     viewModel.delete(todo)
                     setList()
                 }

@@ -34,17 +34,10 @@ class CalendarAdapter(private val dayList: ArrayList<String>, private val value:
 
     //데이터 설정
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        val selectedDate = LocalDate.now()
-        var yearMonth = YearMonth.from(selectedDate)
-        var lastDay = yearMonth.lengthOfMonth()
         if (value[position].toString() == "true"){
             holder.color.setBackgroundResource(R.drawable.calendar_cell_color_blue)
         }
-        // 오늘 날짜, (**/**)의 형식
-        // ex) '8/21'
-        //     '10/21' 등등
         holder.dayText.text = dayList[holder.adapterPosition]
-
         // 제대로 클릭을 했는지 확인함.
         holder.itemView.setOnClickListener {
             itemClickListner.onClick(it, position)

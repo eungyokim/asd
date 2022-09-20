@@ -120,9 +120,8 @@ class setting : AppCompatActivity() {
                                                 call: Call<getMsg>,
                                                 response: Response<getMsg>
                                             ) {
-                                                Log.e("Fdasfsdaf", response.toString())
                                                 Toast.makeText(this@setting, "성공적으로 사용자 정보가 등록되었습니다.", Toast.LENGTH_SHORT).show()
-                                                editor.putString("uuid", it?.sDSCHULCODE.toString())
+                                                editor.putString("uuid", uuid)
                                                 editor.commit()
                                                 val intent = Intent(this@setting, Main::class.java)
                                                 startActivity(intent)

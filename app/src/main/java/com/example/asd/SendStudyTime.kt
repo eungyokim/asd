@@ -9,14 +9,13 @@ data class Message(
 
 interface startStudymode {
     @GET("/studymode/start")
-    @Headers("SN: 64ba59ff-98dc-4f9d-a485-8e209b9957b6")
     fun startStudymode(
-
+        @Header("SN") SN: String,
     ): Call<Message>
 }
 interface stopStudymode {
     @GET("/studymode/stop")
-    @Headers("SN: 64ba59ff-98dc-4f9d-a485-8e209b9957b6")
     fun stopStudymode(
+        @Header("SN") SN: String,
     ): Call<Message>
 }

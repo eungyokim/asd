@@ -1,9 +1,7 @@
 package com.example.asd
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -11,9 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,11 +18,15 @@ import com.example.asd.todos.Todo
 import com.example.asd.todos.TodoViewModel
 import com.example.asd.todos.ViewModelProviderFactory
 import com.example.asd.databinding.CalendarBinding
-import org.w3c.dom.Text
+import com.google.gson.GsonBuilder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.collections.ArrayList
 
 class Calendar : AppCompatActivity() {
@@ -43,32 +43,54 @@ class Calendar : AppCompatActivity() {
 
     lateinit var dayText: String
 
+    lateinit var studytime: String
+    var gson= GsonBuilder().setLenient().create()
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://asdapi.implude.kr/")
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+    private val getStudyTime = retrofit.create(getStudyTime::class.java)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.calendar)
+        getStudyTime.GetStudyTime(getSharedPreferences("uuid", 0).getString("uuid", "").toString())
+            .enqueue(object :
+                Callback<getTime> {
+                override fun onResponse(
+                    call: Call<getTime>,
+                    response: Response<getTime>
+                ) {
+                    var total_time = 0
+                    var index = 0
+                    response.body()?.let {
+                        it.thisMonth!!.forEach { time ->
+                            total_time = total_time + (time!!.time)!!.toInt()
+                            index = index + 1
+                        }
+                    }
+                    studytime = ((total_time - 15000 * index) / 6e+7).toInt().toString()
+                }
 
-        // 달력의 날짜를 누르지 않고 'Todo'추가 시 오늘의 날짜로 입력이 된다.
-        dayText = "${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}"
+                override fun onFailure(call: Call<getTime>, t: Throwable) {
+                }
+            })
 
+        // 캘린더의 날짜를 누르지 않고 추가하기 버튼을 눌렀을 때 발생하는 장애를 방지합니다.
+        dayText =
+            "${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}"
 
-
-        // Todo List
         //뷰모델 받아오기
         viewModel = ViewModelProvider(this, ViewModelProviderFactory(this.application))
             .get(TodoViewModel::class.java)
-
         //recycler view에 보여질 아이템 Room에서 받아오기
         viewModel.date.observe(this, androidx.lifecycle.Observer {
-            Log.d("date",it.toString());
             val list = viewModel.getSelectedList(it.toString())
-
             adapter = TodoAdapter(this, list, viewModel, ::mixFunction);
-            Log.d("date",list.toString());
-
+            // TodoList recyclerview에 적용하기
             findViewById<RecyclerView>(R.id.recyclerView).adapter = adapter
             findViewById<RecyclerView>(R.id.recyclerView).layoutManager = LinearLayoutManager(this)
         })
-
 
         // calendar
         //binding 초기화
@@ -95,21 +117,24 @@ class Calendar : AppCompatActivity() {
         // Add Todo List
         findViewById<Button>(R.id.add_button).setOnClickListener {
             if (findViewById<TextView>(R.id.recycleradd).text.toString() != "") {
-                val rnd = Random()
-                val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-
-
                 var year = dayText.split("/")[0]
                 var month = dayText.split("/")[1]
                 var date = dayText.split("/")[2]
 
-                val todo = Todo(findViewById<TextView>(R.id.recycleradd).text.toString(), "${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}", year.toInt(), month.toInt(), date.toInt(), color.toString(), viewModel.getSelectedList("$year/$month/$date").size.toString())
+                val todo = Todo(
+                    findViewById<TextView>(R.id.recycleradd).text.toString(),
+                    "${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}",
+                    year.toInt(),
+                    month.toInt(),
+                    date.toInt(),
+                    viewModel.getSelectedList("$year/$month/$date").size.toString()
+                )
                 viewModel.insert(todo)
                 setList()
                 findViewById<TextView>(R.id.recycleradd).setText("")
-            }
-            else {
-                dayText = "${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}"
+            } else {
+                dayText =
+                    "${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}"
                 setList()
                 findViewById<TextView>(R.id.recycleradd).setText("")
             }
@@ -131,15 +156,25 @@ class Calendar : AppCompatActivity() {
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
         }
-        findViewById<ConstraintLayout>(R.id.SampleLayoutView1).setOnTouchListener(object: OnSwipeTouchListener(this@Calendar) {
+        findViewById<ConstraintLayout>(R.id.SampleLayoutView1).setOnTouchListener(object :
+            OnSwipeTouchListener(this@Calendar) {
             override fun onSwipeLeft() {
                 val intent = Intent(this@Calendar, Main::class.java)
                 startActivity(intent)
-                overridePendingTransition(R.anim.slide_right_enter,R.anim.slide_right_exit)
+                overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
             }
         })
-    }
+        findViewById<TextView>(R.id.calendar_calendar_yearnmonth).setOnClickListener {
+            if(selectedDate.monthValue == LocalDate.now().monthValue){
+                if(studytime.toInt() < 60){
+                    Toast.makeText(this@Calendar, "귀하의 ${LocalDate.now().monthValue}월 총 공부시간은 ${studytime}분입니다.", Toast.LENGTH_LONG).show()
+                }else{
+                    Toast.makeText(this@Calendar, "귀하의 ${LocalDate.now().monthValue}월 총 공부시간은 ${studytime.toInt() / 60}시간 ${studytime.toInt() % 60}분입니다.", Toast.LENGTH_LONG).show()
+                }
 
+            }
+        }
+    }
 
     //날짜 화면에 보여주기
     private fun setMonthView() {
@@ -170,8 +205,7 @@ class Calendar : AppCompatActivity() {
         for (i in _isIn.size..41){
             _isIn.add(false)
         }
-
-            //년월 텍스트 셋팅
+        //년월 텍스트 셋팅
         binding.calendarCalendarYearnmonth.text = yearMonthFromDate(selectedDate)
 
         //날짜 생성해서 리스트에 담기

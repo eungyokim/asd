@@ -20,8 +20,8 @@
         <item>제주특별자치도</item>
     </string-array>
     <string-array name="WhichSort">
-        <item>초등학교</item>
-        <item>중학교</item>
         <item>고등학교</item>
+        <item>중학교</item>
+        <item>초등학교</item>
     </string-array>
 </resources>
