@@ -88,12 +88,12 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
     private fun startProcess() {
         setContentView(R.layout.main)
         findViewById<ImageButton>(R.id.bulb).backgroundTintList = ColorStateList.valueOf(getSharedPreferences("test", 0).getInt("LED_color", -14907928))
-//        val nfcAdapter : NfcAdapter = NfcAdapter.getDefaultAdapter(applicationContext)
-//        val isNfcOn : Boolean = nfcAdapter.isEnabled()
-//
-//        if( isNfcOn == false){
-//            Toast.makeText(application, "공부모드를 시작하려면 NFC를 켜주세요.", Toast.LENGTH_SHORT).show()
-//        }
+        val nfcAdapter : NfcAdapter = NfcAdapter.getDefaultAdapter(applicationContext)
+        val isNfcOn : Boolean = nfcAdapter.isEnabled()
+
+        if( isNfcOn == false){
+            Toast.makeText(application, "공부모드를 시작하려면 NFC를 켜주세요.", Toast.LENGTH_SHORT).show()
+        }
         checkNotificationPolicyAccess(getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
 
         val sharedPreference = getSharedPreferences("test", 0)
