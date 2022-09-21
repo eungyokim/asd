@@ -28,9 +28,6 @@ class TodoViewModel(context: Context) : ViewModel() {
     val date: LiveData<String>
         get() = _date
 
-    fun getList(): MutableList<Todo> {
-        return getAll()
-    }
 
     fun getTodayList(): MutableList<Todo> {
         var tyear = Date.get(java.util.Calendar.YEAR)

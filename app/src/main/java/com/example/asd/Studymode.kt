@@ -73,8 +73,6 @@ class Studymode : AppCompatActivity() {
                 toast("Do Not Disturb turned on.")
             }
         }
-        val sharedPreference = getSharedPreferences("test", 0)
-
         currntTime = findViewById(R.id.currentTime)
         clockText = findViewById(R.id.clock)
         studyTimeText = findViewById(R.id.studyTime)
@@ -124,7 +122,6 @@ class Studymode : AppCompatActivity() {
     }
 
     private fun studying() {
-        val sharedPreference = getSharedPreferences("test", 0)
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         fun offDND(){
             if (checkNotificationPolicyAccess(notificationManager)){

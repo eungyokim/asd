@@ -10,7 +10,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.net.Uri
 import android.nfc.NfcAdapter
 import android.nfc.Tag
@@ -18,10 +17,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.View
-import android.webkit.WebChromeClient
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
@@ -30,7 +25,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -88,24 +82,22 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkAndstart()
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        // Turn off DND
         startProcess()
     }
 
     private fun startProcess() {
         setContentView(R.layout.main)
-        val nfcAdapter : NfcAdapter = NfcAdapter.getDefaultAdapter(applicationContext)
-        val isNfcOn : Boolean = nfcAdapter.isEnabled()
-
-        if( isNfcOn == false){
-            Toast.makeText(application, "공부모드를 시작하려면 NFC를 켜주세요.", Toast.LENGTH_SHORT).show()
-        }
+        findViewById<ImageButton>(R.id.bulb).backgroundTintList = ColorStateList.valueOf(getSharedPreferences("test", 0).getInt("LED_color", -14907928))
+//        val nfcAdapter : NfcAdapter = NfcAdapter.getDefaultAdapter(applicationContext)
+//        val isNfcOn : Boolean = nfcAdapter.isEnabled()
+//
+//        if( isNfcOn == false){
+//            Toast.makeText(application, "공부모드를 시작하려면 NFC를 켜주세요.", Toast.LENGTH_SHORT).show()
+//        }
         checkNotificationPolicyAccess(getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
 
         val sharedPreference = getSharedPreferences("test", 0)
         val editor  : SharedPreferences.Editor = sharedPreference.edit()
-
 
         findViewById<SeekBar>(R.id.SoundSeekBar).setProgress(sharedPreference.getInt("white_noise", 0))
         findViewById<SeekBar>(R.id.LedSeekBar).setProgress(sharedPreference.getInt("LED", 0))
@@ -123,7 +115,6 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         }
-
         findViewById<ImageButton>(R.id.bulb).setOnClickListener {
             ColorPickerDialog
                 .Builder(this)        				// Pass Activity Instance
@@ -131,7 +122,7 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
                 .setNegativeButton("뒤로가기")
                 .setPositiveButton("선택")// Default "Choose Color"
                 .setColorShape(ColorShape.CIRCLE)   // Default ColorShape.CIRCLE
-                .setDefaultColor(R.color.True_white)    // Pass Default Color
+                .setDefaultColor(sharedPreference.getInt("LED_color", 1869288))    // Pass Default Color
                 .setColorListener { color, colorHex ->
                     LedHex.SendLedHex(getSharedPreferences("uuid", 0).getString("uuid", "").toString(),colorHex).enqueue(object :
                         Callback<getMsg> {
@@ -241,13 +232,7 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
             val intent = Intent(this@Main, setting::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
-            if(sharedPreference.getInt("LED_color", 0) == -16711916){
-                findViewById<ImageButton>(R.id.bulb).backgroundTintList = ColorStateList.valueOf(1869288)
-            }
-        }else{
-            findViewById<ImageButton>(R.id.bulb).backgroundTintList = ColorStateList.valueOf(sharedPreference.getInt("LED_color", 1869288))
         }
-
         // Navigation bar control
         val navigationbar_book = findViewById<ImageButton>(R.id.navigation_bar_book)
         val navigationbar_info = findViewById<ImageButton>(R.id.navigation_bar_info)
@@ -393,12 +378,9 @@ class Main : AppCompatActivity(),  NfcAdapter.ReaderCallback{
             startActivity(turnOnStudyMode)
         }
     }
-
     override fun onTagDiscovered(tag: Tag?) {
     }
-
 }
-
 
 private fun yearMonthFromDate(date: LocalDate): String{
     var formatter = DateTimeFormatter.ofPattern("YYYY년 M월 d일")

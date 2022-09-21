@@ -25,24 +25,18 @@ class TodoAdapter(val context: Context,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoAdapter.TodoViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.item_todo,parent,false)
-
         return TodoViewHolder(view)
-
     }
-
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         // position에 해당하는 Todo객체를 얻음
         val todo = itemList[getItemCount() - 1 - position];
-
         holder.itemView.findViewById<TextView>(R.id.todo_text).text = todo.text
-
         //todo의 날짜와 시간이 표시됨.
         holder.todoTime.apply {
             holder.itemView.findViewById<TextView>(R.id.todo_time).text = "${todo.date}"
             holder.itemView.findViewById<TextView>(R.id.todo_time).visibility = View.VISIBLE
             holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv1)
         }
-
         //아이템 내의 x버튼을 누를 경우 삭제여부 확인.
         holder.todoDelete.setOnClickListener {
             val alertDialog = AlertDialog.Builder(context)
@@ -56,16 +50,11 @@ class TodoAdapter(val context: Context,
             alertDialog.show()
         }
     }
-
     override fun getItemCount(): Int {
         return itemList.size
     }
-
-
     inner class TodoViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         val todoTime = itemView.findViewById<TextView>(R.id.todo_time)
         val todoDelete = itemView.findViewById<ImageView>(R.id.todo_delete)
     }
-
-
 }

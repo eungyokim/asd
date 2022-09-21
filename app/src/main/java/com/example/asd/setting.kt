@@ -64,7 +64,6 @@ class setting : AppCompatActivity() {
         spinnerWhere.adapter = ArrayAdapter.createFromResource(this, R.array.WhereIs, android.R.layout.simple_spinner_dropdown_item)
         spinnerWhich.adapter = ArrayAdapter.createFromResource(this, R.array.WhichSort, android.R.layout.simple_spinner_dropdown_item)
 
-
         // Check Box Control.
         var listener = CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked) {
@@ -94,7 +93,6 @@ class setting : AppCompatActivity() {
             var whereIs = spinnerWhere.selectedItem.toString()
             var whichSort = spinnerWhich.selectedItem.toString()
 
-
             if(name.equals("") ||
                 age.equals("") ||
                 gender.equals("") ||
@@ -123,6 +121,7 @@ class setting : AppCompatActivity() {
                                                 Toast.makeText(this@setting, "성공적으로 사용자 정보가 등록되었습니다.", Toast.LENGTH_SHORT).show()
                                                 editor.putString("uuid", uuid)
                                                 editor.commit()
+                                                getSharedPreferences("test",0).edit().putInt("LED_color",1869288)
                                                 val intent = Intent(this@setting, Main::class.java)
                                                 startActivity(intent)
                                                 overridePendingTransition(R.anim.slide_left_enter,R.anim.slide_left_exit)
@@ -233,13 +232,11 @@ class setting : AppCompatActivity() {
             params.height = ViewGroup.LayoutParams.MATCH_PARENT
             dialog.window!!.attributes = params
             dialog.show()
-
             newWebView.webChromeClient = object : WebChromeClient() {
                 override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
                     super.onJsAlert(view, url, message, result)
                     return true
                 }
-
                 override fun onCloseWindow(window: WebView?) {
                     dialog.dismiss()
                 }

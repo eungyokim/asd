@@ -22,11 +22,8 @@ class TodayAdapter(val context: Context,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodayAdapter.TodoViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.item_todo,parent,false)
-
         return TodoViewHolder(view)
-
     }
-
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         // position에 해당하는 Todo객체를 얻음
         val todo = itemList[getItemCount() - 1 - position];
@@ -37,20 +34,8 @@ class TodayAdapter(val context: Context,
         holder.todoTime.apply {
             holder.itemView.findViewById<TextView>(R.id.todo_time).text = "${todo.date}"
             holder.itemView.findViewById<TextView>(R.id.todo_time).visibility = View.VISIBLE
-
-//            if(todo.index!!.toInt() % 5 == 0){
-                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv1)
-//            }else if(todo.index!!.toInt() % 5 == 1){
-//                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv2)
-//            }else if(todo.index!!.toInt() % 5 == 2){
-//                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv3)
-//            }else if(todo.index!!.toInt() % 5 == 3){
-//                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv4)
-//            }else if(todo.index!!.toInt() % 5 == 4){
-//                holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv5)
-//            }
+            holder.itemView.findViewById<TextView>(R.id.todo_color).setBackgroundResource(R.drawable.todo_list_itemv1)
         }
-
         //아이템 내의 x버튼을 누를 경우 삭제여부 확인.
         holder.todoDelete.setOnClickListener {
             val alertDialog = AlertDialog.Builder(context)
@@ -64,7 +49,6 @@ class TodayAdapter(val context: Context,
             alertDialog.show()
         }
     }
-
     override fun getItemCount(): Int {
         return itemList.size
     }
